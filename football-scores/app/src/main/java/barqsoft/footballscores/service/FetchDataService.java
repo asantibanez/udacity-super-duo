@@ -28,25 +28,22 @@ import barqsoft.footballscores.R;
 /**
  * Created by yehya khaled on 3/2/2015.
  */
-public class myFetchService extends IntentService
+public class FetchDataService extends IntentService
 {
-    public static final String LOG_TAG = "myFetchService";
-    public myFetchService()
-    {
-        super("myFetchService");
+    public static final String LOG_TAG = FetchDataService.class.getSimpleName();
+    public static final boolean DEBUG = true;
+
+    public FetchDataService() {
+        super(LOG_TAG);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent)
-    {
+    protected void onHandleIntent(Intent intent) {
         getData("n2");
         getData("p2");
-
-        return;
     }
 
-    private void getData (String timeFrame)
-    {
+    private void getData (String timeFrame) {
         //Creating fetch URL
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
         final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
@@ -54,20 +51,29 @@ public class myFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
-        HttpURLConnection m_connection = null;
+        if(DEBUG)
+            Log.d(LOG_TAG, "The url we are looking at is: " + fetch_build.toString()); //log spam
+
+        HttpURLConnection connection = null;
         BufferedReader reader = null;
-        String JSON_data = null;
+        String jsonData = null;
         //Opening Connection
         try {
             URL fetch = new URL(fetch_build.toString());
-            m_connection = (HttpURLConnection) fetch.openConnection();
-            m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token",getString(R.string.api_key));
-            m_connection.connect();
+            connection = (HttpURLConnection) fetch.openConnection();
+            connection.setRequestMethod("GET");
+
+            //Api key for service in string resource
+            String apiKey = getString(R.string.api_key);
+            connection.addRequestProperty("X-Auth-Token", apiKey);
+            if(DEBUG)
+                Log.d(LOG_TAG, "Api Key: " + apiKey);
+
+            //Connect to api
+            connection.connect();
 
             // Read the input stream into a String
-            InputStream inputStream = m_connection.getInputStream();
+            InputStream inputStream = connection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
@@ -86,16 +92,19 @@ public class myFetchService extends IntentService
                 // Stream was empty.  No point in parsing.
                 return;
             }
-            JSON_data = buffer.toString();
+            jsonData = buffer.toString();
+            if(DEBUG)
+                Log.d(LOG_TAG, jsonData);
         }
         catch (Exception e)
         {
-            Log.e(LOG_TAG,"Exception here" + e.getMessage());
+            Log.e(LOG_TAG,"Exception here: " + e.getMessage());
+            e.printStackTrace();
         }
         finally {
-            if(m_connection != null)
+            if(connection != null)
             {
-                m_connection.disconnect();
+                connection.disconnect();
             }
             if (reader != null)
             {
@@ -109,9 +118,9 @@ public class myFetchService extends IntentService
             }
         }
         try {
-            if (JSON_data != null) {
+            if (jsonData != null) {
                 //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
-                JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
+                JSONArray matches = new JSONObject(jsonData).getJSONArray("fixtures");
                 if (matches.length() == 0) {
                     //if there is no data, call the function on dummy data
                     //this is expected behavior during the off season.
@@ -120,7 +129,7 @@ public class myFetchService extends IntentService
                 }
 
 
-                processJSONdata(JSON_data, getApplicationContext(), true);
+                processJSONdata(jsonData, getApplicationContext(), true);
             } else {
                 //Could not Connect
                 Log.d(LOG_TAG, "Could not connect to server.");
@@ -128,7 +137,7 @@ public class myFetchService extends IntentService
         }
         catch(Exception e)
         {
-            Log.e(LOG_TAG,e.getMessage());
+            Log.e(LOG_TAG, "Json parsing error: " + e.getMessage());
         }
     }
     private void processJSONdata (String JSONdata,Context mContext, boolean isReal)
