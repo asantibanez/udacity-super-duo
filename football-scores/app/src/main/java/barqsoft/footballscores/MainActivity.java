@@ -1,17 +1,29 @@
 package barqsoft.footballscores;
 
-import android.content.Intent;
+import android.accounts.Account;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
+
+import barqsoft.footballscores.sync.AccountUtils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
 {
     public static String LOG_TAG = MainActivity.class.getSimpleName();
     public static final boolean DEBUG = true;
+
+    //Variables
+    Account mAccount;
+    DailyFixturesPagerAdapter mAdapter;
+
+    //Controls
+    @Bind(R.id.toolbar) Toolbar mToolbarView;
+    @Bind(R.id.tabs) TabLayout mTabs;
+    @Bind(R.id.pager) ViewPager mPager;
 
     public static int selected_match_id;
     public static int current_fragment = 2;
@@ -23,6 +35,19 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        mAccount = AccountUtils.createSyncAccount(this);
+        AccountUtils.setSyncAutomatically(mAccount, getContentResolver());
+
+        setSupportActionBar(mToolbarView);
+
+        mAdapter = new DailyFixturesPagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mAdapter);
+        mTabs.setupWithViewPager(mPager);
+
+
+
 
         /*
         if (savedInstanceState == null) {

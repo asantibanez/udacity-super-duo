@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="barqsoft.footballscores" >
 
-    <uses-permission
-        android:name="android.permission.INTERNET"
-        android:maxSdkVersion="22" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
 
     <application
         android:name=".FootballScoresApplication"
@@ -35,7 +38,29 @@
                 android:value="barqsoft.footballscores.MainActivity" />
         </activity>
 
-        <service android:name=".service.FetchDataService" />
+        <!-- Authenticator Service -->
+        <service
+            android:name=".sync.ScoresAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!-- Sync Adapter Service -->
+        <service
+            android:name=".sync.ScoresSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+                <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter" />
+        </service>
 
     </application>
 

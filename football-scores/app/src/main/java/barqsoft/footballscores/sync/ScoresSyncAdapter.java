@@ -1,10 +1,13 @@
-package barqsoft.footballscores.service;
+package barqsoft.footballscores.sync;
 
-import android.app.IntentService;
+import android.accounts.Account;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SyncResult;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -26,21 +29,21 @@ import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
 
 /**
- * Created by yehya khaled on 3/2/2015.
+ * Created by Andrés on 9/11/15.
  */
-public class FetchDataService extends IntentService
-{
-    public static final String LOG_TAG = FetchDataService.class.getSimpleName();
+public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
+
+    public static final String LOG_TAG = ScoresSyncAdapter.class.getSimpleName();
     public static final boolean DEBUG = true;
 
-    public FetchDataService() {
-        super(LOG_TAG);
+    public ScoresSyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onPerformSync(Account account, Bundle bundle, String authority, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         getData("n2");
-        getData("p2");
+        getData("p3");
     }
 
     private void getData (String timeFrame) {
@@ -64,7 +67,7 @@ public class FetchDataService extends IntentService
             connection.setRequestMethod("GET");
 
             //Api key for service in string resource
-            String apiKey = getString(R.string.api_key);
+            String apiKey =getContext().getString(R.string.api_key);
             connection.addRequestProperty("X-Auth-Token", apiKey);
             if(DEBUG)
                 Log.d(LOG_TAG, "Api Key: " + apiKey);
@@ -124,12 +127,12 @@ public class FetchDataService extends IntentService
                 if (matches.length() == 0) {
                     //if there is no data, call the function on dummy data
                     //this is expected behavior during the off season.
-                    processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
+                    processJSONdata(getContext().getString(R.string.dummy_data), getContext(), false);
                     return;
                 }
 
 
-                processJSONdata(jsonData, getApplicationContext(), true);
+                processJSONdata(jsonData, getContext(), true);
             } else {
                 //Could not Connect
                 Log.d(LOG_TAG, "Could not connect to server.");
@@ -283,4 +286,3 @@ public class FetchDataService extends IntentService
 
     }
 }
-
