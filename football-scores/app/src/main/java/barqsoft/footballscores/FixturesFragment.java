@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -109,7 +108,7 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
                 getActivity(),
-                DatabaseContract.scores_table.buildScoreWithDate(),
+                DatabaseContract.ScoresTable.buildScoreWithDate(),
                 null,
                 null,
                 new String[]{getDateMillisForQueryFormat(mDateMillis)},

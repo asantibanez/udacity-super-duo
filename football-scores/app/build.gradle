@@ -33,4 +33,11 @@ dependencies {
 
     //Joda Time
     compile 'net.danlew:android.joda:2.8.2'
+
+    //Retrofit
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta1'
+
+    //OkHttp
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
 }

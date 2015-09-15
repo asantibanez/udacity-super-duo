@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import barqsoft.footballscores.endpoints.FootballDataService;
 import barqsoft.footballscores.sync.AccountUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         mPager.setAdapter(mAdapter);
         mTabs.setupWithViewPager(mPager);
 
-
+        new FootballDataService().getTeamInformation("66");
 
 
         /*

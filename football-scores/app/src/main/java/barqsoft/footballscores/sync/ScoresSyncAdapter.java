@@ -42,8 +42,8 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String authority, ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        getData("n2");
-        getData("p3");
+        getData("n4");
+        getData("p1");
 
         downloadCrests();
     }
@@ -163,43 +163,57 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
         final String EREDIVISIE = "404";
 
 
+        //Response Tokens
+        //Response links
         final String SEASON_LINK = "http://api.football-data.org/alpha/soccerseasons/";
         final String MATCH_LINK = "http://api.football-data.org/alpha/fixtures/";
-        final String FIXTURES = "fixtures";
-        final String LINKS = "_links";
-        final String SOCCER_SEASON = "soccerseason";
-        final String SELF = "self";
+        final String HOME_TEAM_LINK = "http://api.football-data.org/alpha/teams/";
+        final String AWAY_TEAM_LINK = "http://api.football-data.org/alpha/teams/";
+        //Link objects
+        final String FIXTURES_OBJECT = "fixtures";
+        final String LINKS_OBJECT = "_links";
+        final String SOCCER_SEASON_OBJECT = "soccerseason";
+        final String SELF_OBJECT = "self";
+        final String HOME_TEAM_OBJECT = "homeTeam";
+        final String AWAY_TEAM_OBJECT = "awayTeam";
+        //JSON data tokens
         final String MATCH_DATE = "date";
-        final String HOME_TEAM = "homeTeamName";
-        final String AWAY_TEAM = "awayTeamName";
+        final String HOME_TEAM_NAME = "homeTeamName";
+        final String AWAY_TEAM_NAME = "awayTeamName";
         final String RESULT = "result";
-        final String HOME_GOALS = "goalsHomeTeam";
-        final String AWAY_GOALS = "goalsAwayTeam";
+        final String HOME_TEAM_GOALS = "goalsHomeTeam";
+        final String AWAY_TEAM_GOALS = "goalsAwayTeam";
         final String MATCH_DAY = "matchday";
 
+
         //Match data
+        String match_id = null;
+        String match_day = null;
         String League = null;
         String mDate = null;
         String mTime = null;
-        String Home = null;
-        String Away = null;
-        String Home_goals = null;
-        String Away_goals = null;
-        String match_id = null;
-        String match_day = null;
+        //Home team data
+        String homeId = null;
+        String homeName = null;
+        String homeGoals = null;
+        //Away tema data
+        String awayId = null;
+        String awayName = null;
+        String awayGoals = null;
+
 
 
         try {
-            JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
+            JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES_OBJECT);
 
 
             //ContentValues to be inserted
-            Vector<ContentValues> values = new Vector <ContentValues> (matches.length());
+            Vector<ContentValues> allMatchesValues = new Vector <ContentValues> (matches.length());
             for(int i = 0;i < matches.length();i++)
             {
 
                 JSONObject match_data = matches.getJSONObject(i);
-                League = match_data.getJSONObject(LINKS).getJSONObject(SOCCER_SEASON).
+                League = match_data.getJSONObject(LINKS_OBJECT).getJSONObject(SOCCER_SEASON_OBJECT).
                         getString("href");
                 League = League.replace(SEASON_LINK,"");
                 //This if statement controls which leagues we're interested in the data from.
@@ -212,7 +226,7 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                         League.equals(BUNDESLIGA2)         ||
                         League.equals(PRIMERA_DIVISION)     )
                 {
-                    match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
+                    match_id = match_data.getJSONObject(LINKS_OBJECT).getJSONObject(SELF_OBJECT).
                             getString("href");
                     match_id = match_id.replace(MATCH_LINK, "");
                     if(!isReal){
@@ -245,40 +259,48 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                         Log.d(LOG_TAG, "error here!");
                         Log.e(LOG_TAG,e.getMessage());
                     }
-                    Home = match_data.getString(HOME_TEAM);
-                    Away = match_data.getString(AWAY_TEAM);
-                    Home_goals = match_data.getJSONObject(RESULT).getString(HOME_GOALS);
-                    Away_goals = match_data.getJSONObject(RESULT).getString(AWAY_GOALS);
-                    match_day = match_data.getString(MATCH_DAY);
-                    ContentValues match_values = new ContentValues();
-                    match_values.put(DatabaseContract.scores_table.MATCH_ID,match_id);
-                    match_values.put(DatabaseContract.scores_table.DATE_COL,mDate);
-                    match_values.put(DatabaseContract.scores_table.TIME_COL,mTime);
-                    match_values.put(DatabaseContract.scores_table.HOME_COL,Home);
-                    match_values.put(DatabaseContract.scores_table.AWAY_COL,Away);
-                    match_values.put(DatabaseContract.scores_table.HOME_GOALS_COL,Home_goals);
-                    match_values.put(DatabaseContract.scores_table.AWAY_GOALS_COL,Away_goals);
-                    match_values.put(DatabaseContract.scores_table.LEAGUE_COL,League);
-                    match_values.put(DatabaseContract.scores_table.MATCH_DAY,match_day);
-                    //log spam
 
+                    //Extract match data
+                    //Home team
+                    homeId = match_data.getJSONObject(LINKS_OBJECT).getJSONObject(HOME_TEAM_OBJECT).getString("href").replace(HOME_TEAM_LINK, "");
+                    homeName = match_data.getString(HOME_TEAM_NAME);
+                    homeGoals = match_data.getJSONObject(RESULT).getString(HOME_TEAM_GOALS);
+                    //Away team
+                    awayId = match_data.getJSONObject(LINKS_OBJECT).getJSONObject(AWAY_TEAM_OBJECT).getString("href").replace(AWAY_TEAM_LINK, "");
+                    awayName = match_data.getString(AWAY_TEAM_NAME);
+                    awayGoals = match_data.getJSONObject(RESULT).getString(AWAY_TEAM_GOALS);
+                    //Match
+                    match_day = match_data.getString(MATCH_DAY);
                     if(DEBUG) {
                         Log.v(LOG_TAG, "******************************");
                         Log.v(LOG_TAG, "Match: " + match_id);
                         Log.v(LOG_TAG, "Date: " + mDate);
                         Log.v(LOG_TAG, "Time: " + mTime);
-                        Log.v(LOG_TAG, "Home: " + Home);
-                        Log.v(LOG_TAG, "Away: " + Away);
-                        Log.v(LOG_TAG, "Home Goals: " + Home_goals);
-                        Log.v(LOG_TAG, "Away Goals: " + Away_goals);
+                        Log.v(LOG_TAG, "Home: " + homeId + " " + homeName);
+                        Log.v(LOG_TAG, "Away: " + awayId + " " + awayName);
+                        Log.v(LOG_TAG, "Goals: " + homeGoals + " - " + awayGoals);
                     }
 
-                    values.add(match_values);
+                    //Gather values
+                    ContentValues matchValues = new ContentValues();
+                    matchValues.put(DatabaseContract.ScoresTable.MATCH_ID, match_id);
+                    matchValues.put(DatabaseContract.ScoresTable.DATE_COL, mDate);
+                    matchValues.put(DatabaseContract.ScoresTable.TIME_COL, mTime);
+                    matchValues.put(DatabaseContract.ScoresTable.HOME_ID_COL, homeId);
+                    matchValues.put(DatabaseContract.ScoresTable.HOME_NAME_COL, homeName);
+                    matchValues.put(DatabaseContract.ScoresTable.HOME_GOALS_COL, homeGoals);
+                    matchValues.put(DatabaseContract.ScoresTable.AWAY_ID_COL, awayId);
+                    matchValues.put(DatabaseContract.ScoresTable.AWAY_NAME_COL, awayName);
+                    matchValues.put(DatabaseContract.ScoresTable.AWAY_GOALS_COL, awayGoals);
+                    matchValues.put(DatabaseContract.ScoresTable.LEAGUE_COL, League);
+                    matchValues.put(DatabaseContract.ScoresTable.MATCH_DAY, match_day);
+                    allMatchesValues.add(matchValues);
+
                 }
             }
             int inserted_data = 0;
-            ContentValues[] insert_data = new ContentValues[values.size()];
-            values.toArray(insert_data);
+            ContentValues[] insert_data = new ContentValues[allMatchesValues.size()];
+            allMatchesValues.toArray(insert_data);
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 

@@ -9,21 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import barqsoft.footballscores.DatabaseContract.ScoresTable;
 
 /**
  * Created by yehya khaled on 2/26/2015.
  */
 public class FixturesCursorAdapter extends CursorAdapter
 {
-    public static final int COL_HOME = 3;
-    public static final int COL_AWAY = 4;
-    public static final int COL_HOME_GOALS = 6;
-    public static final int COL_AWAY_GOALS = 7;
-    public static final int COL_DATE = 1;
-    public static final int COL_LEAGUE = 5;
-    public static final int COL_MATCHDAY = 9;
-    public static final int COL_ID = 8;
-    public static final int COL_MATCHTIME = 2;
     public double detail_match_id = 0;
     private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
     public FixturesCursorAdapter(Context context, Cursor cursor, int flags)
@@ -45,18 +37,22 @@ public class FixturesCursorAdapter extends CursorAdapter
     public void bindView(View view, final Context context, Cursor cursor)
     {
         final ViewHolder mHolder = (ViewHolder) view.getTag();
-        mHolder.home_name.setText(cursor.getString(COL_HOME));
-        mHolder.away_name.setText(cursor.getString(COL_AWAY));
-        mHolder.date.setText(cursor.getString(COL_MATCHTIME));
-        mHolder.score.setText(Utilities.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
-        mHolder.match_id = cursor.getDouble(COL_ID);
-        mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(
-                cursor.getString(COL_HOME)));
-        mHolder.away_crest.setImageResource(Utilities.getTeamCrestByTeamName(
-                cursor.getString(COL_AWAY)
+
+        //Match data
+        mHolder.match_id = cursor.getDouble(cursor.getColumnIndex(ScoresTable.MATCH_ID));
+        mHolder.date.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.TIME_COL)));
+        mHolder.score.setText(Utilities.getScores(
+                cursor.getInt(cursor.getColumnIndex(ScoresTable.HOME_GOALS_COL)),
+                cursor.getInt(cursor.getColumnIndex(ScoresTable.AWAY_GOALS_COL))
         ));
-        //Log.v(FetchScoreTask.LOG_TAG,mHolder.home_name.getText() + " Vs. " + mHolder.away_name.getText() +" id " + String.valueOf(mHolder.match_id));
-        //Log.v(FetchScoreTask.LOG_TAG,String.valueOf(detail_match_id));
+        //Home team
+        mHolder.home_name.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL)));
+        mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL))));
+        //Away
+        mHolder.away_name.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL)));
+        mHolder.away_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL))));
+
+
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.detail_fragment, null);
@@ -68,10 +64,10 @@ public class FixturesCursorAdapter extends CursorAdapter
             container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                     , ViewGroup.LayoutParams.MATCH_PARENT));
             TextView match_day = (TextView) v.findViewById(R.id.matchday_textview);
-            match_day.setText(Utilities.getMatchDay(cursor.getInt(COL_MATCHDAY),
-                    cursor.getInt(COL_LEAGUE)));
+            match_day.setText(Utilities.getMatchDay(cursor.getInt(cursor.getColumnIndex(ScoresTable.MATCH_DAY)),
+                    cursor.getInt(cursor.getColumnIndex(ScoresTable.LEAGUE_COL))));
             TextView league = (TextView) v.findViewById(R.id.league_textview);
-            league.setText(Utilities.getLeague(cursor.getInt(COL_LEAGUE)));
+            league.setText(Utilities.getLeague(cursor.getInt(cursor.getColumnIndex(ScoresTable.LEAGUE_COL))));
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setOnClickListener(new View.OnClickListener() {
                 @Override
