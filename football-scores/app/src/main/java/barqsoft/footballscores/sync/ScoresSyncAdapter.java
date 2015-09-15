@@ -44,6 +44,8 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String authority, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         getData("n2");
         getData("p3");
+
+        downloadCrests();
     }
 
     private void getData (String timeFrame) {
@@ -260,13 +262,16 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY,match_day);
                     //log spam
 
-                    //Log.v(LOG_TAG,match_id);
-                    //Log.v(LOG_TAG,mDate);
-                    //Log.v(LOG_TAG,mTime);
-                    //Log.v(LOG_TAG,Home);
-                    //Log.v(LOG_TAG,Away);
-                    //Log.v(LOG_TAG,Home_goals);
-                    //Log.v(LOG_TAG,Away_goals);
+                    if(DEBUG) {
+                        Log.v(LOG_TAG, "******************************");
+                        Log.v(LOG_TAG, "Match: " + match_id);
+                        Log.v(LOG_TAG, "Date: " + mDate);
+                        Log.v(LOG_TAG, "Time: " + mTime);
+                        Log.v(LOG_TAG, "Home: " + Home);
+                        Log.v(LOG_TAG, "Away: " + Away);
+                        Log.v(LOG_TAG, "Home Goals: " + Home_goals);
+                        Log.v(LOG_TAG, "Away Goals: " + Away_goals);
+                    }
 
                     values.add(match_values);
                 }
@@ -284,5 +289,9 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(LOG_TAG,e.getMessage());
         }
 
+    }
+
+    public void downloadCrests() {
+        Log.d(LOG_TAG, "Downloading crests");
     }
 }

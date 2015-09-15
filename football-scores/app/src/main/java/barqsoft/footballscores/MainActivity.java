@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity
 
     //Variables
     Account mAccount;
-    DailyFixturesPagerAdapter mAdapter;
+    DailyScoresFragmentPagerAdapter mAdapter;
 
     //Controls
     @Bind(R.id.toolbar) Toolbar mToolbarView;
@@ -39,10 +39,11 @@ public class MainActivity extends AppCompatActivity
 
         mAccount = AccountUtils.createSyncAccount(this);
         AccountUtils.setSyncAutomatically(mAccount, getContentResolver());
+        getContentResolver().requestSync(mAccount, AccountUtils.AUTHORITY, new Bundle());
 
         setSupportActionBar(mToolbarView);
 
-        mAdapter = new DailyFixturesPagerAdapter(getSupportFragmentManager());
+        mAdapter = new DailyScoresFragmentPagerAdapter(this, getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
         mTabs.setupWithViewPager(mPager);
 

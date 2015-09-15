@@ -9,18 +9,17 @@ import barqsoft.footballscores.DatabaseContract.scores_table;
 /**
  * Created by yehya khaled on 2/25/2015.
  */
-public class ScoresDBHelper extends SQLiteOpenHelper
-{
-    public static final String DATABASE_NAME = "Scores.db";
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    public static final String DATABASE_NAME = "football_scores.db";
     private static final int DATABASE_VERSION = 2;
-    public ScoresDBHelper(Context context)
-    {
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db)
-    {
+    public void onCreate(SQLiteDatabase db) {
         final String CreateScoresTable = "CREATE TABLE " + DatabaseContract.SCORES_TABLE + " ("
                 + scores_table._ID + " INTEGER PRIMARY KEY,"
                 + scores_table.DATE_COL + " TEXT NOT NULL,"
