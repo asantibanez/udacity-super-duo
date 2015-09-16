@@ -30,7 +30,7 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     //Variables
     public long mDateMillis;
     public FixturesCursorAdapter mAdapter;
-    public static final int SCORES_LOADER = 0;
+    public static final int LOADER_ID = 2000;
     private int last_selected_item = -1;
 
     //Controls
@@ -70,7 +70,7 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter = new FixturesCursorAdapter(getActivity(), null, 0);
         mListView.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(SCORES_LOADER, null, this);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
 
 
         //mAdapter.detail_match_id = MainActivity.selected_match_id;

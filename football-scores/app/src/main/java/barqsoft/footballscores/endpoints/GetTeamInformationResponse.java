@@ -7,11 +7,11 @@ import com.google.gson.Gson;
  */
 public class GetTeamInformationResponse {
 
-    String name;
-    String code;
-    String shortName;
-    String squadMarketValue;
-    String crestUrl;
+    public String name;
+    public String code;
+    public String shortName;
+    public String squadMarketValue;
+    public String crestUrl;
 
     public String toJson() {
         return new Gson().toJson(this);

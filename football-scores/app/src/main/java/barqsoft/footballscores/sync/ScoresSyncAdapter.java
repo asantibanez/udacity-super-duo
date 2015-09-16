@@ -8,25 +8,34 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
+
+import com.koushikdutta.ion.Ion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.endpoints.FootballDataService;
+import barqsoft.footballscores.endpoints.GetTeamInformationResponse;
 
 /**
  * Created by Andrés on 9/11/15.
@@ -36,15 +45,29 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String LOG_TAG = ScoresSyncAdapter.class.getSimpleName();
     public static final boolean DEBUG = true;
 
+    private String mApiKey;
+    private ArrayList<String> mTeamsIds;
+
+
     public ScoresSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mTeamsIds = new ArrayList<>();
     }
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String authority, ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        getData("n4");
+        //Get api key
+        mApiKey = getContext().getString(R.string.api_key);
+        if(DEBUG)
+            Log.d(LOG_TAG, "Api Key: " + mApiKey);
+
+        //Get next 3 days data including today
+        getData("n3");
+
+        //Get previous day data
         getData("p1");
 
+        //Get team logos
         downloadCrests();
     }
 
@@ -69,10 +92,7 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
             connection.setRequestMethod("GET");
 
             //Api key for service in string resource
-            String apiKey =getContext().getString(R.string.api_key);
-            connection.addRequestProperty("X-Auth-Token", apiKey);
-            if(DEBUG)
-                Log.d(LOG_TAG, "Api Key: " + apiKey);
+            connection.addRequestProperty("X-Auth-Token", mApiKey);
 
             //Connect to api
             connection.connect();
@@ -296,6 +316,9 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                     matchValues.put(DatabaseContract.ScoresTable.MATCH_DAY, match_day);
                     allMatchesValues.add(matchValues);
 
+                    //Gather team ids fetched
+                    mTeamsIds.add(homeId);
+                    mTeamsIds.add(awayId);
                 }
             }
             int inserted_data = 0;
@@ -314,6 +337,38 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     public void downloadCrests() {
-        Log.d(LOG_TAG, "Downloading crests");
+        Log.i(LOG_TAG, "Downloading team crests");
+
+        //Loop fetched team ids
+        for(String teamId : mTeamsIds) {
+
+            //Path for local crest
+            String crestPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + teamId + ".svg";
+            if(DEBUG)
+                Log.d(LOG_TAG, crestPath);
+
+            //Download crest if local file does not exist
+            boolean crestFileExists = new File(crestPath).exists();
+            if(!crestFileExists) {
+                try {
+                    Log.d(LOG_TAG, "Getting crest for team " + teamId);
+                    GetTeamInformationResponse response = new FootballDataService().getTeamInformation(mApiKey, teamId);
+                    if(response.crestUrl != null) {
+                        //Got crest url. Download!
+                        Ion.with(getContext())
+                                .load(response.crestUrl)
+                                .write(new File(crestPath))
+                                .get();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(LOG_TAG, "Local crest found for team " + teamId);
+            }
+        }
+
+        Log.i(LOG_TAG, "Crests download finished!");
+
     }
 }

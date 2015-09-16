@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity
         mPager.setAdapter(mAdapter);
         mTabs.setupWithViewPager(mPager);
 
-        new FootballDataService().getTeamInformation("66");
-
-
         /*
         if (savedInstanceState == null) {
             my_main = new PagerFragment();

@@ -3,23 +3,40 @@ package barqsoft.footballscores;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.samples.svg.SvgDecoder;
+import com.bumptech.glide.samples.svg.SvgDrawableTranscoder;
+import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter;
+import com.caverock.androidsvg.SVG;
+
+import java.io.File;
+import java.io.InputStream;
+
 import barqsoft.footballscores.DatabaseContract.ScoresTable;
 
 /**
  * Created by yehya khaled on 2/26/2015.
  */
-public class FixturesCursorAdapter extends CursorAdapter
-{
+public class FixturesCursorAdapter extends CursorAdapter {
+
     public double detail_match_id = 0;
     private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
-    public FixturesCursorAdapter(Context context, Cursor cursor, int flags)
-    {
+
+    public FixturesCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context,cursor,flags);
     }
 
@@ -47,7 +64,12 @@ public class FixturesCursorAdapter extends CursorAdapter
         ));
         //Home team
         mHolder.home_name.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL)));
-        mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL))));
+        //mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL))));
+
+        String homeTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
+        String homeCrestPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + homeTeamId + ".svg";
+        SVG.getFromInputStream()
+
         //Away
         mHolder.away_name.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL)));
         mHolder.away_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL))));
