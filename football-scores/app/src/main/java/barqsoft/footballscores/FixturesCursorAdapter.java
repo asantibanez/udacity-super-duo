@@ -75,7 +75,7 @@ public class FixturesCursorAdapter extends CursorAdapter {
         ));
 
         //Home team data
-        String homeTeamId = "17"; //cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
+        String homeTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
         mHolder.mHomeTeamName.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL)));
 
         String homeCrestPath = "file:// " + Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + homeTeamId + ".svg";
