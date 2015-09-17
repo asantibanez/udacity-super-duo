@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ import com.bumptech.glide.samples.svg.SvgDrawableTranscoder;
 import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter;
 import com.caverock.androidsvg.SVG;
 
-import java.io.File;
 import java.io.InputStream;
 
 import barqsoft.footballscores.DatabaseContract.ScoresTable;
@@ -75,24 +73,20 @@ public class FixturesCursorAdapter extends CursorAdapter {
         ));
 
         //Home team data
-        String homeTeamId = "17"; //cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
+        String homeTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
         mHolder.mHomeTeamName.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL)));
-
-        String homeCrestPath = "file:// " + Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + homeTeamId + ".svg";
-        Log.d(LOG_TAG, homeCrestPath);
-        Uri uri = Uri.parse(homeCrestPath);
         requestBuilder
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        // SVG cannot be serialized so it's not worth to cache it
-                .load(uri)
+                .load(Uri.parse(Utilities.getTeamCrestPath(homeTeamId)))
                 .into(mHolder.mHomeTeamCrest);
-
-        //mHolder.mHomeTeamCrest.setImageResource(Utilities.getTeamCrestByTeamId(context, homeTeamId));
 
         //Away team data
         String awayTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_ID_COL));
         mHolder.mAwayTeamName.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL)));
-        Utilities.getTeamCrestByTeamId(context, awayTeamId);
+        requestBuilder
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .load(Uri.parse(Utilities.getTeamCrestPath(awayTeamId)))
+                .into(mHolder.mAwayTeamCrest);
 
         /*
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
