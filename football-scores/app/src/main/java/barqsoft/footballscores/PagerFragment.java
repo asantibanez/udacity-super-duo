@@ -66,7 +66,7 @@ public class PagerFragment extends Fragment
             return getDayName(getActivity(),System.currentTimeMillis()+((position-2)*86400000));
         }
         public String getDayName(Context context, long dateInMillis) {
-            // If the date is today, return the localized version of "Today" instead of the actual
+            // If the mMatchDate is today, return the localized version of "Today" instead of the actual
             // day name.
 
             Time t = new Time();

@@ -19,7 +19,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/home_crest"/>
+                android:layerType="software"
+                android:id="@+id/home_team_crest"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,7 +28,7 @@
                 android:textSize="@dimen/TeamNames"
                 android:gravity="center"
                 android:text="@string/test_text"
-                android:id="@+id/home_name"/>
+                android:id="@+id/home_team_name"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -42,7 +43,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="@dimen/Score"
-                android:id="@+id/score_textview"/>
+                android:id="@+id/match_score"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
@@ -50,7 +51,7 @@
                 android:text="@string/test_text"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:id="@+id/data_textview"/>
+                android:id="@+id/match_date"/>
 
         </LinearLayout>
         <LinearLayout
@@ -62,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/away_crest"/>
+                android:id="@+id/away_team_crest"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +71,7 @@
                 android:gravity="center"
                 android:text="@string/test_text"
                 android:textSize="@dimen/TeamNames"
-                android:id="@+id/away_name"/>
+                android:id="@+id/away_team_name"/>
         </LinearLayout>
     </LinearLayout>
     <FrameLayout

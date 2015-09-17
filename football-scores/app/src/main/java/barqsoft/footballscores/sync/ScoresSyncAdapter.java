@@ -9,7 +9,6 @@ import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;

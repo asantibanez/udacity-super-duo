@@ -1,5 +1,7 @@
 package barqsoft.footballscores;
 
+import android.content.Context;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
@@ -53,17 +55,20 @@ public class Utilities
         }
     }
 
-    public static String getScores(int home_goals,int awaygoals)
-    {
-        if(home_goals < 0 || awaygoals < 0)
-        {
+    public static String getScores(int homeTeamGoals,int awayTeamGoals) {
+        if(homeTeamGoals < 0 || awayTeamGoals < 0)
             return " - ";
-        }
         else
-        {
-            return String.valueOf(home_goals) + " - " + String.valueOf(awaygoals);
-        }
+            return String.valueOf(homeTeamGoals) + " - " + String.valueOf(awayTeamGoals);
     }
+
+    public static int getTeamCrestByTeamId(Context context, String teamId) {
+        String name = "team_crest_" + teamId;
+        String defType = "drawable";
+        String defPackage = context.getApplicationInfo().packageName;
+        return context.getResources().getIdentifier(name, defType, defPackage);
+    }
+
 
     public static int getTeamCrestByTeamName (String teamname)
     {
