@@ -1,6 +1,9 @@
 package barqsoft.footballscores;
 
 import android.content.Context;
+import android.os.Environment;
+
+import java.io.File;
 
 /**
  * Created by yehya khaled on 3/3/2015.
@@ -62,31 +65,11 @@ public class Utilities
             return String.valueOf(homeTeamGoals) + " - " + String.valueOf(awayTeamGoals);
     }
 
-    public static int getTeamCrestByTeamId(Context context, String teamId) {
-        String name = "team_crest_" + teamId;
-        String defType = "drawable";
-        String defPackage = context.getApplicationInfo().packageName;
-        return context.getResources().getIdentifier(name, defType, defPackage);
+    public static String getTeamCrestPath(String teamId) {
+        return "https://upload.wikimedia.org/wikipedia/de/e/e5/Logo_Arminia_Bielefeld.svg";
+        //return "file:// " + Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + teamId + ".svg";
     }
 
 
-    public static int getTeamCrestByTeamName (String teamname)
-    {
-        if (teamname==null){return R.drawable.no_icon;}
-        switch (teamname)
-        { //This is the set of icons that are currently in the app. Feel free to find and add more
-            //as you go.
-            case "Arsenal London FC" : return R.drawable.arsenal;
-            case "Manchester United FC" : return R.drawable.manchester_united;
-            case "Swansea City" : return R.drawable.swansea_city_afc;
-            case "Leicester City" : return R.drawable.leicester_city_fc_hd_logo;
-            case "Everton FC" : return R.drawable.everton_fc_logo1;
-            case "West Ham United FC" : return R.drawable.west_ham;
-            case "Tottenham Hotspur FC" : return R.drawable.tottenham_hotspur;
-            case "West Bromwich Albion" : return R.drawable.west_bromwich_albion_hd_logo;
-            case "Sunderland AFC" : return R.drawable.sunderland;
-            case "Stoke City FC" : return R.drawable.stoke_city;
-            default: return R.drawable.no_icon;
-        }
-    }
+
 }
