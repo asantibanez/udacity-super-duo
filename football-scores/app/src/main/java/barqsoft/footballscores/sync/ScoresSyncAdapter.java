@@ -6,6 +6,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,10 +31,12 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import barqsoft.footballscores.DatabaseContract;
+import barqsoft.footballscores.provider.DatabaseContract;
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.endpoints.FootballDataService;
 import barqsoft.footballscores.endpoints.GetTeamInformationResponse;
+import barqsoft.footballscores.provider.DatabaseHelper;
+import barqsoft.footballscores.provider.FootballScoresProvider;
 
 /**
  * Created by Andrés on 9/11/15.
@@ -60,13 +63,13 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d(LOG_TAG, "Api Key: " + mApiKey);
 
         //Get next 3 days data including today
-        getData("n3");
+        getData("n1");
 
         //Get previous day data
         getData("p1");
 
         //Get team logos
-        downloadCrests();
+        downloadTeamsInformation();
     }
 
     private void getData (String timeFrame) {
@@ -300,30 +303,24 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                     }
 
                     //Gather values
-                    ContentValues matchValues = new ContentValues();
-                    matchValues.put(DatabaseContract.ScoresTable.MATCH_ID, match_id);
-                    matchValues.put(DatabaseContract.ScoresTable.DATE_COL, mDate);
-                    matchValues.put(DatabaseContract.ScoresTable.TIME_COL, mTime);
-                    matchValues.put(DatabaseContract.ScoresTable.HOME_ID_COL, homeId);
-                    matchValues.put(DatabaseContract.ScoresTable.HOME_NAME_COL, homeName);
-                    matchValues.put(DatabaseContract.ScoresTable.HOME_GOALS_COL, homeGoals);
-                    matchValues.put(DatabaseContract.ScoresTable.AWAY_ID_COL, awayId);
-                    matchValues.put(DatabaseContract.ScoresTable.AWAY_NAME_COL, awayName);
-                    matchValues.put(DatabaseContract.ScoresTable.AWAY_GOALS_COL, awayGoals);
-                    matchValues.put(DatabaseContract.ScoresTable.LEAGUE_COL, League);
-                    matchValues.put(DatabaseContract.ScoresTable.MATCH_DAY, match_day);
-                    allMatchesValues.add(matchValues);
+
+                    ContentValues fixtureValues = DatabaseHelper.buildFixtureContentValues(match_id, mDate, mTime, homeId, homeName, homeGoals, awayId, awayName, awayGoals, League, match_day);
+                    getContext().getContentResolver().insert(FootballScoresProvider.FIXTURES_URI, fixtureValues);
+                    allMatchesValues.add(fixtureValues);
 
                     //Gather team ids fetched
                     mTeamsIds.add(homeId);
                     mTeamsIds.add(awayId);
                 }
             }
+
+            /*
             int inserted_data = 0;
             ContentValues[] insert_data = new ContentValues[allMatchesValues.size()];
             allMatchesValues.toArray(insert_data);
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
+                    */
 
             //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
@@ -334,12 +331,32 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
 
     }
 
-    public void downloadCrests() {
-        Log.i(LOG_TAG, "Downloading team crests");
+    public void downloadTeamsInformation() {
+        Log.i(LOG_TAG, "Downloading teams information");
 
         //Loop fetched team ids
         for(String teamId : mTeamsIds) {
 
+            try {
+                //Get team information
+                GetTeamInformationResponse response = new FootballDataService().getTeamInformation(mApiKey, teamId);
+
+                //Save team information
+                ContentValues teamContentValues = DatabaseHelper.buildTeamContentValues(teamId, response.name, response.crestUrl);
+                getContext().getContentResolver().insert(FootballScoresProvider.TEAMS_URI, teamContentValues);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        Cursor cursor = getContext().getContentResolver().query(FootballScoresProvider.TEAMS_URI, null, null, null, null);
+        Log.d(LOG_TAG, "Teams: " + cursor.getCount());
+        cursor.close();
+
+        Log.i(LOG_TAG, "Teams information download finished!");
+
+            /*
             //Path for local crest
             String crestPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + teamId + ".svg";
             if(DEBUG)
@@ -365,8 +382,8 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.d(LOG_TAG, "Local crest found for team " + teamId);
             }
         }
+        */
 
-        Log.i(LOG_TAG, "Crests download finished!");
 
     }
 }

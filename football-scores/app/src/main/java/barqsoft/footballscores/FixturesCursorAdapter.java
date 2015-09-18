@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ import com.caverock.androidsvg.SVG;
 
 import java.io.InputStream;
 
-import barqsoft.footballscores.DatabaseContract.ScoresTable;
+import barqsoft.footballscores.provider.DatabaseContract.FixturesTable;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -35,12 +34,12 @@ public class FixturesCursorAdapter extends CursorAdapter {
 
     public static final String LOG_TAG = FixturesCursorAdapter.class.getSimpleName();
 
-    private GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
     public FixturesCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
+    }
 
-        requestBuilder = Glide.with(context)
+    public GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> getRequestBuilder(Context context) {
+        return Glide.with(context)
                 .using(Glide.buildStreamModelLoader(Uri.class, context), InputStream.class)
                 .from(Uri.class)
                 .as(SVG.class)
@@ -65,25 +64,25 @@ public class FixturesCursorAdapter extends CursorAdapter {
         final ViewHolder mHolder = (ViewHolder) view.getTag();
 
         //Match data
-        mHolder.mMatchId = cursor.getLong(cursor.getColumnIndex(ScoresTable.MATCH_ID));
-        mHolder.mMatchTime.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.TIME_COL)));
+        mHolder.mMatchId = cursor.getLong(cursor.getColumnIndex(FixturesTable.MATCH_ID));
+        mHolder.mMatchTime.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.TIME_COL)));
         mHolder.mMatchScore.setText(Utilities.getScores(
-                cursor.getInt(cursor.getColumnIndex(ScoresTable.HOME_GOALS_COL)),
-                cursor.getInt(cursor.getColumnIndex(ScoresTable.AWAY_GOALS_COL))
+                cursor.getInt(cursor.getColumnIndex(FixturesTable.HOME_GOALS_COL)),
+                cursor.getInt(cursor.getColumnIndex(FixturesTable.AWAY_GOALS_COL))
         ));
 
         //Home team data
-        String homeTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_ID_COL));
-        mHolder.mHomeTeamName.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.HOME_NAME_COL)));
-        requestBuilder
+        String homeTeamId = cursor.getString(cursor.getColumnIndex(FixturesTable.HOME_ID_COL));
+        mHolder.mHomeTeamName.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.HOME_NAME_COL)));
+        getRequestBuilder(context)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .load(Uri.parse(Utilities.getTeamCrestPath(homeTeamId)))
                 .into(mHolder.mHomeTeamCrest);
 
         //Away team data
-        String awayTeamId = cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_ID_COL));
-        mHolder.mAwayTeamName.setText(cursor.getString(cursor.getColumnIndex(ScoresTable.AWAY_NAME_COL)));
-        requestBuilder
+        String awayTeamId = cursor.getString(cursor.getColumnIndex(FixturesTable.AWAY_ID_COL));
+        mHolder.mAwayTeamName.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.AWAY_NAME_COL)));
+        getRequestBuilder(context)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .load(Uri.parse(Utilities.getTeamCrestPath(awayTeamId)))
                 .into(mHolder.mAwayTeamCrest);

@@ -17,6 +17,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import barqsoft.footballscores.provider.DatabaseContract;
+import barqsoft.footballscores.provider.FootballScoresProvider;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -108,9 +110,9 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
                 getActivity(),
-                DatabaseContract.ScoresTable.buildScoreWithDate(),
+                FootballScoresProvider.FIXTURES_URI,
                 null,
-                null,
+                DatabaseContract.FixturesTable.DATE_COL + " = ?",
                 new String[]{getDateMillisForQueryFormat(mDateMillis)},
                 null
         );
