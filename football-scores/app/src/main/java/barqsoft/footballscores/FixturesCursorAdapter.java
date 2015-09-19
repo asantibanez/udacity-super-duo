@@ -23,7 +23,7 @@ import com.caverock.androidsvg.SVG;
 
 import java.io.InputStream;
 
-import barqsoft.footballscores.provider.DatabaseContract.FixturesTable;
+import barqsoft.footballscores.provider.FixtureAndTeam;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -52,7 +52,7 @@ public class FixturesCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.scores_list_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_fixture, parent, false);
         ViewHolder mHolder = new ViewHolder(view);
         view.setTag(mHolder);
 
@@ -63,29 +63,34 @@ public class FixturesCursorAdapter extends CursorAdapter {
     public void bindView(View view, final Context context, Cursor cursor) {
         final ViewHolder mHolder = (ViewHolder) view.getTag();
 
+        FixtureAndTeam fixtureAndTeam = FixtureAndTeam.fromCursor(cursor);
+
         //Match data
-        mHolder.mMatchId = cursor.getLong(cursor.getColumnIndex(FixturesTable.MATCH_ID));
-        mHolder.mMatchTime.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.TIME_COL)));
-        mHolder.mMatchScore.setText(Utilities.getScores(
-                cursor.getInt(cursor.getColumnIndex(FixturesTable.HOME_GOALS_COL)),
-                cursor.getInt(cursor.getColumnIndex(FixturesTable.AWAY_GOALS_COL))
-        ));
+        mHolder.leagueName.setText(Utilities.getLeague(fixtureAndTeam.leagueId));
+        mHolder.matchTime.setText(fixtureAndTeam.matchTime);
+        mHolder.matchScore.setText(Utilities.getScores(fixtureAndTeam.homeTeamGoals, fixtureAndTeam.awayTeamGoals));
 
         //Home team data
-        String homeTeamId = cursor.getString(cursor.getColumnIndex(FixturesTable.HOME_ID_COL));
-        mHolder.mHomeTeamName.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.HOME_NAME_COL)));
-        getRequestBuilder(context)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .load(Uri.parse(Utilities.getTeamCrestPath(homeTeamId)))
-                .into(mHolder.mHomeTeamCrest);
+        mHolder.homeTeamName.setText(fixtureAndTeam.homeTeamName);
+        mHolder.homeTeamCrest.setContentDescription(fixtureAndTeam.homeTeamName);
+        if(fixtureAndTeam.homeCrestUrlAvailable())
+            getRequestBuilder(context)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .load(Uri.parse(fixtureAndTeam.homeTeamCrestUrl))
+                    .placeholder(R.drawable.placeholder_crest)
+                    .error(R.drawable.placeholder_crest)
+                    .into(mHolder.homeTeamCrest);
 
         //Away team data
-        String awayTeamId = cursor.getString(cursor.getColumnIndex(FixturesTable.AWAY_ID_COL));
-        mHolder.mAwayTeamName.setText(cursor.getString(cursor.getColumnIndex(FixturesTable.AWAY_NAME_COL)));
-        getRequestBuilder(context)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .load(Uri.parse(Utilities.getTeamCrestPath(awayTeamId)))
-                .into(mHolder.mAwayTeamCrest);
+        mHolder.awayTeamName.setText(fixtureAndTeam.awayTeamName);
+        mHolder.awayTeamCrest.setContentDescription(fixtureAndTeam.awayTeamName);
+        if(fixtureAndTeam.awayCrestUrlAvailable())
+            getRequestBuilder(context)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .load(Uri.parse(fixtureAndTeam.awayTeamCrestUrl))
+                    .placeholder(R.drawable.placeholder_crest)
+                    .error(R.drawable.placeholder_crest)
+                    .into(mHolder.awayTeamCrest);
 
         /*
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
@@ -138,14 +143,14 @@ public class FixturesCursorAdapter extends CursorAdapter {
      * ViewHolder
      */
     public static class ViewHolder {
-        public long mMatchId;
 
-        @Bind(R.id.home_team_name) TextView mHomeTeamName;
-        @Bind(R.id.away_team_name) TextView mAwayTeamName;
-        @Bind(R.id.match_score) TextView mMatchScore;
-        @Bind(R.id.match_date) TextView mMatchTime;
-        @Bind(R.id.home_team_crest) ImageView mHomeTeamCrest;
-        @Bind(R.id.away_team_crest) ImageView mAwayTeamCrest;
+        @Bind(R.id.home_team_name) TextView homeTeamName;
+        @Bind(R.id.away_team_name) TextView awayTeamName;
+        @Bind(R.id.match_score) TextView matchScore;
+        @Bind(R.id.match_date) TextView matchTime;
+        @Bind(R.id.home_team_crest) ImageView homeTeamCrest;
+        @Bind(R.id.away_team_crest) ImageView awayTeamCrest;
+        @Bind(R.id.league_name) TextView leagueName;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);

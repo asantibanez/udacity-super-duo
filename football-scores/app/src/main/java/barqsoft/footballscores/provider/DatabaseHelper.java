@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import barqsoft.footballscores.provider.DatabaseContract;
 import barqsoft.footballscores.provider.DatabaseContract.FixturesTable;
 import barqsoft.footballscores.provider.DatabaseContract.TeamsTable;
 

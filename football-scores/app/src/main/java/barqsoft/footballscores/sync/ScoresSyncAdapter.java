@@ -3,23 +3,22 @@ package barqsoft.footballscores.sync;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,12 +30,14 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import barqsoft.footballscores.Utilities;
 import barqsoft.footballscores.provider.DatabaseContract;
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.endpoints.FootballDataService;
 import barqsoft.footballscores.endpoints.GetTeamInformationResponse;
-import barqsoft.footballscores.provider.DatabaseHelper;
+import barqsoft.footballscores.provider.Fixture;
 import barqsoft.footballscores.provider.FootballScoresProvider;
+import barqsoft.footballscores.provider.Team;
 
 /**
  * Created by Andrés on 9/11/15.
@@ -47,12 +48,9 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final boolean DEBUG = true;
 
     private String mApiKey;
-    private ArrayList<String> mTeamsIds;
-
 
     public ScoresSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mTeamsIds = new ArrayList<>();
     }
 
     @Override
@@ -63,13 +61,13 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d(LOG_TAG, "Api Key: " + mApiKey);
 
         //Get next 3 days data including today
-        getData("n1");
+        getData("n4");
 
         //Get previous day data
         getData("p1");
 
         //Get team logos
-        downloadTeamsInformation();
+        getTeamsCrestsUrls();
     }
 
     private void getData (String timeFrame) {
@@ -241,11 +239,12 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                 //add leagues here in order to have them be added to the DB.
                 // If you are finding no data in the app, check that this contains all the leagues.
                 // If it doesn't, that can cause an empty DB, bypassing the dummy data routine.
-                if(     League.equals(PREMIER_LEAGUE)      ||
-                        League.equals(SERIE_A)             ||
-                        League.equals(BUNDESLIGA1)         ||
-                        League.equals(BUNDESLIGA2)         ||
-                        League.equals(PRIMERA_DIVISION)     )
+                int leagueId = Integer.parseInt(League);
+                if(     leagueId == Utilities.PREMIER_LEAGUE    ||
+                        leagueId == Utilities.SERIE_A           ||
+                        leagueId == Utilities.BUNDESLIGA1       ||
+                        leagueId == Utilities.BUNDESLIGA2       ||
+                        leagueId == Utilities.PRIMERA_DIVISION    )
                 {
                     match_id = match_data.getJSONObject(LINKS_OBJECT).getJSONObject(SELF_OBJECT).
                             getString("href");
@@ -302,27 +301,29 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
                         Log.v(LOG_TAG, "Goals: " + homeGoals + " - " + awayGoals);
                     }
 
-                    //Gather values
+                    //Save teams if required
+                    Team team;
+                    ContentResolver contentResolver = getContext().getContentResolver();
+                    //Home team
+                    team = Team.withId(contentResolver, homeId);
+                    if(team == null)
+                        Team.save(contentResolver, homeId, homeName, "");
 
-                    ContentValues fixtureValues = DatabaseHelper.buildFixtureContentValues(match_id, mDate, mTime, homeId, homeName, homeGoals, awayId, awayName, awayGoals, League, match_day);
-                    getContext().getContentResolver().insert(FootballScoresProvider.FIXTURES_URI, fixtureValues);
-                    allMatchesValues.add(fixtureValues);
+                    //Away team
+                    team = Team.withId(contentResolver, awayId);
+                    if(team == null)
+                        Team.save(contentResolver, awayId, awayName, "");
 
-                    //Gather team ids fetched
-                    mTeamsIds.add(homeId);
-                    mTeamsIds.add(awayId);
+                    //Save fixture
+                    Fixture.save(
+                            contentResolver, match_id, mDate, mTime,
+                            homeId, homeName, homeGoals, awayId,
+                            awayName, awayGoals, League, match_day
+                    );
+
                 }
             }
 
-            /*
-            int inserted_data = 0;
-            ContentValues[] insert_data = new ContentValues[allMatchesValues.size()];
-            allMatchesValues.toArray(insert_data);
-            inserted_data = mContext.getContentResolver().bulkInsert(
-                    DatabaseContract.BASE_CONTENT_URI,insert_data);
-                    */
-
-            //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
@@ -331,59 +332,40 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
 
     }
 
-    public void downloadTeamsInformation() {
-        Log.i(LOG_TAG, "Downloading teams information");
+    public void getTeamsCrestsUrls() {
+        Cursor cursor = getContext().getContentResolver().query(
+                FootballScoresProvider.TEAMS_URI,
+                null,
+                DatabaseContract.TeamsTable.TEAM_CREST_URL + " = '' ",
+                null,
+                null
+        );
 
-        //Loop fetched team ids
-        for(String teamId : mTeamsIds) {
+        if(cursor == null)
+            return;
+
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Team team = Team.fromCursor(cursor);
 
             try {
-                //Get team information
-                GetTeamInformationResponse response = new FootballDataService().getTeamInformation(mApiKey, teamId);
-
-                //Save team information
-                ContentValues teamContentValues = DatabaseHelper.buildTeamContentValues(teamId, response.name, response.crestUrl);
-                getContext().getContentResolver().insert(FootballScoresProvider.TEAMS_URI, teamContentValues);
-            } catch (IOException e) {
+                GetTeamInformationResponse response = new FootballDataService().getTeamInformation(mApiKey, team.id);
+                if(response != null && response.crestUrl != null && response.crestUrl.length() > 0) {
+                    Team.save(getContext().getContentResolver(), team.id, team.name, response.crestUrl);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
+            cursor.moveToNext();
         }
-
-        Cursor cursor = getContext().getContentResolver().query(FootballScoresProvider.TEAMS_URI, null, null, null, null);
-        Log.d(LOG_TAG, "Teams: " + cursor.getCount());
-        cursor.close();
-
-        Log.i(LOG_TAG, "Teams information download finished!");
-
-            /*
-            //Path for local crest
-            String crestPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + teamId + ".svg";
-            if(DEBUG)
-                Log.d(LOG_TAG, crestPath);
-
-            //Download crest if local file does not exist
-            boolean crestFileExists = new File(crestPath).exists();
-            if(!crestFileExists) {
-                try {
-                    Log.d(LOG_TAG, "Getting crest for team " + teamId);
-                    GetTeamInformationResponse response = new FootballDataService().getTeamInformation(mApiKey, teamId);
-                    if(response.crestUrl != null) {
-                        //Got crest url. Download!
-                        Ion.with(getContext())
-                                .load(response.crestUrl)
-                                .write(new File(crestPath))
-                                .get();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.d(LOG_TAG, "Local crest found for team " + teamId);
-            }
-        }
-        */
-
-
     }
+
+    public static void syncImmediately(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(AccountUtils.createSyncAccount(context), AccountUtils.AUTHORITY, bundle);
+    }
+
 }

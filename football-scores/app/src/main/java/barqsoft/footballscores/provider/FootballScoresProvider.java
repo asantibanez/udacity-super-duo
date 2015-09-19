@@ -24,10 +24,12 @@ public class FootballScoresProvider extends ContentProvider {
     //Uris
     public static final Uri TEAMS_URI = DatabaseContract.BASE_CONTENT_URI.buildUpon().appendPath("teams").build();
     public static final Uri FIXTURES_URI = DatabaseContract.BASE_CONTENT_URI.buildUpon().appendPath("fixtures").build();
+    public static final Uri FIXTURES_AND_TEAMS_URI = DatabaseContract.BASE_CONTENT_URI.buildUpon().appendPath("fixtures_teams").build();
 
     //Uri codes
     private static final int TEAMS_URI_CODE = 100;
     private static final int FIXTURES_URI_CODE = 101;
+    private static final int FIXTURES_AND_TEAMS_URI_CODE = 102;
 
     //Uri matcher
     private UriMatcher mUriMatcher = buildUriMatcher();
@@ -36,6 +38,7 @@ public class FootballScoresProvider extends ContentProvider {
         final String authority = DatabaseContract.CONTENT_AUTHORITY;
         matcher.addURI(authority, "teams" , TEAMS_URI_CODE);
         matcher.addURI(authority, "fixtures" , FIXTURES_URI_CODE);
+        matcher.addURI(authority, "fixtures_teams" , FIXTURES_AND_TEAMS_URI_CODE);
         return matcher;
     }
 
@@ -56,11 +59,18 @@ public class FootballScoresProvider extends ContentProvider {
         final int match = mUriMatcher.match(uri);
         switch (match) {
             case TEAMS_URI_CODE:
+                Log.d(LOG_TAG, DatabaseContract.TEAMS_TABLE);
                 cursor = db.query(DatabaseContract.TEAMS_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
 
             case FIXTURES_URI_CODE:
+                Log.d(LOG_TAG, DatabaseContract.FIXTURES_TABLE);
                 cursor = db.query(DatabaseContract.FIXTURES_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
+            case FIXTURES_AND_TEAMS_URI_CODE:
+                Log.d(LOG_TAG, DatabaseContract.FIXTURES_TEAMS_VIEW);
+                cursor = db.query(DatabaseContract.FIXTURES_TEAMS_VIEW, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
 
             default:
@@ -68,9 +78,8 @@ public class FootballScoresProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
         return cursor;
+
     }
 
     @Nullable

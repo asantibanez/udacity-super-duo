@@ -1,34 +1,53 @@
 package barqsoft.footballscores;
 
-import android.content.Context;
-import android.os.Environment;
-
-import java.io.File;
+import android.util.Log;
 
 /**
  * Created by yehya khaled on 3/3/2015.
  */
-public class Utilities
-{
-    public static final int SERIE_A = 357;
-    public static final int PREMIER_LEGAUE = 354;
-    public static final int CHAMPIONS_LEAGUE = 362;
-    public static final int PRIMERA_DIVISION = 358;
-    public static final int BUNDESLIGA = 351;
-    public static String getLeague(int league_num)
-    {
-        switch (league_num)
-        {
-            case SERIE_A : return "Seria A";
-            case PREMIER_LEGAUE : return "Premier League";
-            case CHAMPIONS_LEAGUE : return "UEFA Champions League";
-            case PRIMERA_DIVISION : return "Primera Division";
-            case BUNDESLIGA : return "Bundesliga";
-            default: return "Not known League Please report";
+public class Utilities {
+    public static final String LOG_TAG = Utilities.class.getSimpleName();
+
+    public static final int BUNDESLIGA1 = 394;
+    public static final int BUNDESLIGA2 = 395;
+    public static final int BUNDESLIGA3 = 403;
+    public static final int LIGUE1 = 396;
+    public static final int LIGUE2 = 397;
+    public static final int PREMIER_LEAGUE = 398;
+    public static final int PRIMERA_DIVISION = 399;
+    public static final int SEGUNDA_DIVISION = 400;
+    public static final int SERIE_A = 401;
+    public static final int PRIMERA_LIGA = 402;
+    public static final int EREDIVISIE = 404;
+
+    public static String getLeague(int leagueId) {
+
+        switch (leagueId) {
+            case BUNDESLIGA1:
+            case BUNDESLIGA2:
+            case BUNDESLIGA3:
+                return "Bundesliga";
+
+            case PREMIER_LEAGUE:
+                return "Premier League";
+
+            case SERIE_A :
+                return "Serie A";
+
+            case PRIMERA_DIVISION:
+                return "Primera Division";
+
+            case SEGUNDA_DIVISION:
+                return "Segunda Division";
+
+            default:
+                return "";
         }
     }
+
     public static String getMatchDay(int match_day,int league_num)
     {
+        /*
         if(league_num == CHAMPIONS_LEAGUE)
         {
             if (match_day <= 6)
@@ -56,6 +75,8 @@ public class Utilities
         {
             return "Matchday : " + String.valueOf(match_day);
         }
+        */
+        return "";
     }
 
     public static String getScores(int homeTeamGoals,int awayTeamGoals) {
@@ -64,12 +85,5 @@ public class Utilities
         else
             return String.valueOf(homeTeamGoals) + " - " + String.valueOf(awayTeamGoals);
     }
-
-    public static String getTeamCrestPath(String teamId) {
-        return "https://upload.wikimedia.org/wikipedia/de/e/e5/Logo_Arminia_Bielefeld.svg";
-        //return "file:// " + Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + teamId + ".svg";
-    }
-
-
 
 }

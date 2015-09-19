@@ -13,6 +13,15 @@ public class DatabaseContract {
     public static final String FIXTURES_TABLE = "fixtures_table";
     public static final String TEAMS_TABLE = "teams_table";
 
+    //Views
+    public static final String FIXTURES_TEAMS_VIEW =
+            FIXTURES_TABLE + " " + FixturesAndTeamsView.FIXTURE_ALIAS +
+            " INNER JOIN " + TEAMS_TABLE + " " + FixturesAndTeamsView.HOME_TEAM_ALIAS +
+                    " ON " + FixturesAndTeamsView.HOME_TEAM_ID + " = " + FixturesAndTeamsView.FIXTURE_HOME_TEAM_ID +
+            " INNER JOIN " + TEAMS_TABLE + " " + FixturesAndTeamsView.AWAY_TEAM_ALIAS +
+                    " ON " + FixturesAndTeamsView.AWAY_TEAM_ID + " = " + FixturesAndTeamsView.FIXTURE_AWAY_TEAM_ID
+            ;
+
     //URIs
     public static final String CONTENT_AUTHORITY = "barqsoft.footballscores";
     public static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -38,22 +47,6 @@ public class DatabaseContract {
         public static final String MATCH_ID = "match_id";
         public static final String MATCH_DAY = "match_day";
 
-        //Types
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + FIXTURES_PATH;
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + FIXTURES_PATH;
-
-
-        public static Uri buildScoreWithLeague() {
-            return BASE_CONTENT_URI.buildUpon().appendPath("league").build();
-        }
-
-        public static Uri buildScoreWithId() {
-            return BASE_CONTENT_URI.buildUpon().appendPath("id").build();
-        }
-
-        public static Uri buildScoreWithDate() {
-            return BASE_CONTENT_URI.buildUpon().appendPath("date").build();
-        }
     }
 
     //Teams
@@ -64,11 +57,54 @@ public class DatabaseContract {
         public static final String TEAM_NAME = "team_name";
         public static final String TEAM_CREST_URL = "team_crest_url";
 
-        //Types
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TEAMS_PATH;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TEAMS_PATH;
+    }
+
+
+    //Views definitions
+    //FixturesAndTeams
+    public static final class FixturesAndTeamsView {
+
+        //Aliases
+        public static final String FIXTURE_ALIAS = "fixture";
+        public static final String HOME_TEAM_ALIAS = "home";
+        public static final String AWAY_TEAM_ALIAS = "away";
+
+        //Columns
+        //Fixture
+        public static final String FIXTURE_ID = FIXTURE_ALIAS + "." + FixturesTable._ID;
+        public static final String FIXTURE_MATCH_ID = FIXTURE_ALIAS + "." + FixturesTable.MATCH_ID;
+        public static final String FIXTURE_MATCH_TIME = FIXTURE_ALIAS + "." + FixturesTable.TIME_COL;
+        public static final String FIXTURE_HOME_TEAM_ID = FIXTURE_ALIAS + "." + FixturesTable.HOME_ID_COL;
+        public static final String FIXTURE_AWAY_TEAM_ID = FIXTURE_ALIAS + "." + FixturesTable.AWAY_ID_COL;
+        public static final String HOME_TEAM_GOALS = FIXTURE_ALIAS + "." + FixturesTable.HOME_GOALS_COL;
+        public static final String AWAY_TEAM_GOALS = FIXTURE_ALIAS + "." + FixturesTable.AWAY_GOALS_COL;
+        public static final String FIXTURE_LEAGUE_ID = FIXTURE_ALIAS + "." + FixturesTable.LEAGUE_COL;
+
+        //Home Team
+        public static final String HOME_TEAM_ID = HOME_TEAM_ALIAS + "." + TeamsTable.TEAM_ID;
+        public static final String HOME_TEAM_NAME = HOME_TEAM_ALIAS + "." + TeamsTable.TEAM_NAME;
+
+        public static final String HOME_TEAM_CREST_URL = HOME_TEAM_ALIAS + "." + TeamsTable.TEAM_CREST_URL;
+        //Away Team
+        public static final String AWAY_TEAM_ID = AWAY_TEAM_ALIAS + "." + TeamsTable.TEAM_ID;
+        public static final String AWAY_TEAM_NAME = AWAY_TEAM_ALIAS + "." + TeamsTable.TEAM_NAME;
+        public static final String AWAY_TEAM_CREST_URL = AWAY_TEAM_ALIAS + "." + TeamsTable.TEAM_CREST_URL;
+
+        //Projection
+        public static final String[] projection = new String[]{
+                FIXTURE_ID,
+                FIXTURE_MATCH_ID,
+                FIXTURE_MATCH_TIME,
+                HOME_TEAM_ID,
+                HOME_TEAM_NAME,
+                HOME_TEAM_CREST_URL,
+                HOME_TEAM_GOALS,
+                AWAY_TEAM_ID,
+                AWAY_TEAM_NAME,
+                AWAY_TEAM_CREST_URL,
+                AWAY_TEAM_GOALS,
+                FIXTURE_LEAGUE_ID
+        };
 
     }
 }

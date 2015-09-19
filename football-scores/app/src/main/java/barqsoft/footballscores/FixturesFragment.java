@@ -10,8 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -33,11 +36,13 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     public long mDateMillis;
     public FixturesCursorAdapter mAdapter;
     public static final int LOADER_ID = 2000;
-    private int last_selected_item = -1;
 
     //Controls
     @Bind(R.id.progress_bar) ProgressBar mProgressBarView;
     @Bind(R.id.list) ListView mListView;
+    @Bind(R.id.error_view) LinearLayout mErrorView;
+    @Bind(R.id.error_image) ImageView mErrorImage;
+    @Bind(R.id.error_message) TextView mErrorMessage;
 
 
     /**
@@ -108,10 +113,13 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        mErrorView.setVisibility(View.GONE);
+        mProgressBarView.setVisibility(View.VISIBLE);
+
         return new CursorLoader(
                 getActivity(),
-                FootballScoresProvider.FIXTURES_URI,
-                null,
+                FootballScoresProvider.FIXTURES_AND_TEAMS_URI,
+                DatabaseContract.FixturesAndTeamsView.projection,
                 DatabaseContract.FixturesTable.DATE_COL + " = ?",
                 new String[]{getDateMillisForQueryFormat(mDateMillis)},
                 null
@@ -122,6 +130,18 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mProgressBarView.setVisibility(View.GONE);
         mAdapter.swapCursor(cursor);
+
+        if(cursor != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(), FootballScoresProvider.FIXTURES_URI);
+            cursor.setNotificationUri(getContext().getContentResolver(), FootballScoresProvider.TEAMS_URI);
+
+            //No data found
+            if(cursor.getCount() == 0) {
+                mErrorImage.setImageResource(R.drawable.ic_no_fixtures_for_day);
+                mErrorMessage.setText(R.string.no_fixtures_for_day);
+                mErrorView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
