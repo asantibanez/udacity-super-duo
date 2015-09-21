@@ -22,6 +22,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import barqsoft.footballscores.provider.DatabaseContract;
 import barqsoft.footballscores.provider.FootballScoresProvider;
+import barqsoft.footballscores.sync.AccountUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -129,14 +130,18 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mProgressBarView.setVisibility(View.GONE);
+
         mAdapter.swapCursor(cursor);
 
+        //Cursor is available
         if(cursor != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), FootballScoresProvider.FIXTURES_URI);
             cursor.setNotificationUri(getContext().getContentResolver(), FootballScoresProvider.TEAMS_URI);
 
             //No data found
-            if(cursor.getCount() == 0) {
+            if(cursor.getCount() > 0) {
+                mErrorView.setVisibility(View.GONE);
+            } else {
                 mErrorImage.setImageResource(R.drawable.ic_no_fixtures_for_day);
                 mErrorMessage.setText(R.string.no_fixtures_for_day);
                 mErrorView.setVisibility(View.VISIBLE);

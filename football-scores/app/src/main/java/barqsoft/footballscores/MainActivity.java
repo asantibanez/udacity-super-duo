@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         mAccount = AccountUtils.createSyncAccount(this);
-        ScoresSyncAdapter.syncImmediately(this);
 
         setSupportActionBar(mToolbarView);
 
@@ -52,6 +51,9 @@ public class MainActivity extends AppCompatActivity
         if(savedInstanceState == null) {
             //Get Today's fixtures
             mTabs.getTabAt(1).select();
+
+            //Request sync
+            ScoresSyncAdapter.syncImmediately(this);
         }
 
     }

@@ -64,7 +64,7 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
         getData("n4");
 
         //Get previous day data
-        getData("p1");
+        getData("p2");
 
         //Get team logos
         getTeamsCrestsUrls();
@@ -359,6 +359,8 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
 
             cursor.moveToNext();
         }
+
+        cursor.close();
     }
 
     public static void syncImmediately(Context context) {
