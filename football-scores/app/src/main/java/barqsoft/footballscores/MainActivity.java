@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 
         if(savedInstanceState == null) {
             //Get Today's fixtures
-            mTabs.getTabAt(1).select();
+            mTabs.getTabAt(2).select();
 
             //Request sync
             ScoresSyncAdapter.syncImmediately(this);

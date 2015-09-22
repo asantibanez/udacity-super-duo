@@ -61,7 +61,7 @@ public class ScoresSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d(LOG_TAG, "Api Key: " + mApiKey);
 
         //Get next 3 days data including today
-        getData("n4");
+        getData("n3");
 
         //Get previous day data
         getData("p2");

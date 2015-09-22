@@ -44,13 +44,13 @@ public class DailyScoresFragmentPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch(position) {
-            case 0:
+            case 1:
                 return mContext.getString(R.string.yesterday);
 
-            case 1:
+            case 2:
                 return mContext.getString(R.string.today);
 
-            case 2:
+            case 3:
                 return mContext.getString(R.string.tomorrow);
 
             default:
@@ -61,7 +61,7 @@ public class DailyScoresFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     public LocalDate getLocalDateForPosition(int position) {
         LocalDate localDate = new LocalDate();
-        localDate = localDate.plusDays(position - 1);
+        localDate = localDate.plusDays(position - 2);
 
         if(DEBUG)
             Log.d(LOG_TAG, "Position: " + position + " / " + localDate.toString());
