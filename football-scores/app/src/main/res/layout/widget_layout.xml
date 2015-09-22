@@ -19,6 +19,7 @@
         android:textSize="18sp"
         android:layout_margin="8dp"
         android:textColor="#111111"
+        android:background="#ffffff"
         android:contentDescription="@string/no_fixtures_for_day" />
 
 </FrameLayout>

@@ -5,9 +5,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.AppWidgetTarget;
 
 import org.joda.time.LocalDate;
 
@@ -111,6 +115,7 @@ class WidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
             remoteViews.setTextViewText(R.id.away_team_score, "0");
 
         return remoteViews;
+
     }
 
     @Override

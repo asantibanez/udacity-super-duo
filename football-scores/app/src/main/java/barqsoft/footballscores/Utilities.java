@@ -1,10 +1,24 @@
 package barqsoft.footballscores;
 
+import android.content.Context;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.util.Log;
+
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.samples.svg.SvgDecoder;
+import com.bumptech.glide.samples.svg.SvgDrawableTranscoder;
+import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter;
+import com.caverock.androidsvg.SVG;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.io.InputStream;
 
 /**
  * Created by yehya khaled on 3/3/2015.
@@ -100,4 +114,15 @@ public class Utilities {
         return dateForQueryFormat;
     }
 
+    public static GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> getRequestBuilder(Context context) {
+        return Glide.with(context)
+                .using(Glide.buildStreamModelLoader(Uri.class, context), InputStream.class)
+                .from(Uri.class)
+                .as(SVG.class)
+                .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                .sourceEncoder(new StreamEncoder())
+                .cacheDecoder(new FileToStreamDecoder<SVG>(new SvgDecoder()))
+                .decoder(new SvgDecoder())
+                .listener(new SvgSoftwareLayerSetter<Uri>());
+    }
 }
