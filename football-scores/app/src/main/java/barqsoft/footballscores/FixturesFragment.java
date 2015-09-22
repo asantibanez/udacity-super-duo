@@ -98,15 +98,7 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
-    public String getDateMillisForQueryFormat(long dateMillis) {
-        LocalDate localDate = new LocalDate(dateMillis);
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-        String dateForQueryFormat = fmt.print(localDate);
-        Log.d(LOG_TAG, "Date for fragment: " + dateForQueryFormat);
-
-        return dateForQueryFormat;
-    }
 
 
     /**
@@ -122,7 +114,7 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
                 FootballScoresProvider.FIXTURES_AND_TEAMS_URI,
                 DatabaseContract.FixturesAndTeamsView.projection,
                 DatabaseContract.FixturesTable.DATE_COL + " = ?",
-                new String[]{getDateMillisForQueryFormat(mDateMillis)},
+                new String[]{ Utilities.getDateMillisForQueryFormat(mDateMillis) },
                 null
         );
     }

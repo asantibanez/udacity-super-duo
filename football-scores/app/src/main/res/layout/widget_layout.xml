@@ -1,0 +1,24 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin">
+
+    <ListView
+        android:id="@+id/fixtures_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_fixtures_for_day"
+        android:textSize="18sp"
+        android:layout_margin="8dp"
+        android:textColor="#111111"
+        android:contentDescription="@string/no_fixtures_for_day" />
+
+</FrameLayout>

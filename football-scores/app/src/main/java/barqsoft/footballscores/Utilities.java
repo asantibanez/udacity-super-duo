@@ -2,6 +2,10 @@ package barqsoft.footballscores;
 
 import android.util.Log;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
@@ -84,6 +88,16 @@ public class Utilities {
             return " - ";
         else
             return String.valueOf(homeTeamGoals) + " - " + String.valueOf(awayTeamGoals);
+    }
+
+    public static String getDateMillisForQueryFormat(long dateMillis) {
+        LocalDate localDate = new LocalDate(dateMillis);
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+        String dateForQueryFormat = fmt.print(localDate);
+        Log.d(LOG_TAG, "Date for fragment: " + dateForQueryFormat);
+
+        return dateForQueryFormat;
     }
 
 }
