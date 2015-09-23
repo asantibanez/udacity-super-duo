@@ -38,63 +38,29 @@ public class Utilities {
     public static final int PRIMERA_LIGA = 402;
     public static final int EREDIVISIE = 404;
 
-    public static String getLeague(int leagueId) {
+    public static String getLeague(Context context, int leagueId) {
 
         switch (leagueId) {
             case BUNDESLIGA1:
             case BUNDESLIGA2:
             case BUNDESLIGA3:
-                return "Bundesliga";
+                return context.getString(R.string.bundesliga);
 
             case PREMIER_LEAGUE:
-                return "Premier League";
+                return context.getString(R.string.premier_league);
 
             case SERIE_A :
-                return "Serie A";
+                return context.getString(R.string.seria_a);
 
             case PRIMERA_DIVISION:
-                return "Primera Division";
+                return context.getString(R.string.primera_division);
 
             case SEGUNDA_DIVISION:
-                return "Segunda Division";
+                return context.getString(R.string.segunda_division);
 
             default:
                 return "";
         }
-    }
-
-    public static String getMatchDay(int match_day,int league_num)
-    {
-        /*
-        if(league_num == CHAMPIONS_LEAGUE)
-        {
-            if (match_day <= 6)
-            {
-                return "Group Stages, Matchday : 6";
-            }
-            else if(match_day == 7 || match_day == 8)
-            {
-                return "First Knockout round";
-            }
-            else if(match_day == 9 || match_day == 10)
-            {
-                return "QuarterFinal";
-            }
-            else if(match_day == 11 || match_day == 12)
-            {
-                return "SemiFinal";
-            }
-            else
-            {
-                return "Final";
-            }
-        }
-        else
-        {
-            return "Matchday : " + String.valueOf(match_day);
-        }
-        */
-        return "";
     }
 
     public static String getScores(int homeTeamGoals,int awayTeamGoals) {

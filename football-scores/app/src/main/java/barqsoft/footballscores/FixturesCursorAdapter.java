@@ -66,7 +66,7 @@ public class FixturesCursorAdapter extends CursorAdapter {
         FixtureAndTeam fixtureAndTeam = FixtureAndTeam.fromCursor(cursor);
 
         //Match data
-        mHolder.leagueName.setText(Utilities.getLeague(fixtureAndTeam.leagueId));
+        mHolder.leagueName.setText(Utilities.getLeague(context, fixtureAndTeam.leagueId));
         mHolder.matchTime.setText(fixtureAndTeam.matchTime);
         mHolder.matchScore.setText(Utilities.getScores(fixtureAndTeam.homeTeamGoals, fixtureAndTeam.awayTeamGoals));
 
