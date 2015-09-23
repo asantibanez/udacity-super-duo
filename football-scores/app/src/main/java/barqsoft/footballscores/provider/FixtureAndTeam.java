@@ -9,6 +9,7 @@ public class FixtureAndTeam {
 
     public String matchId;
     public String matchTime;
+    public String matchDay;
 
     public String homeTeamId;
     public String homeTeamName;
@@ -35,6 +36,14 @@ public class FixtureAndTeam {
         return awayTeamCrestUrl.length() > 0;
     }
 
+    public int getHomeTeamGoals() {
+        return homeTeamGoals > -1 ? homeTeamGoals : 0;
+    }
+
+    public int getAwayTeamGoals() {
+        return awayTeamGoals > -1 ? awayTeamGoals : 0;
+    }
+
     public static FixtureAndTeam fromCursor(Cursor cursor) {
         FixtureAndTeam fixtureAndTeam = new FixtureAndTeam();
 
@@ -57,7 +66,11 @@ public class FixtureAndTeam {
         //League Id
         fixtureAndTeam.leagueId = cursor.getInt(11);
 
+        //League Id
+        fixtureAndTeam.matchDay = cursor.getString(12);
+
         return fixtureAndTeam;
     }
+
 
 }

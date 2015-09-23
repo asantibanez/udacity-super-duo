@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -21,12 +23,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import barqsoft.footballscores.provider.DatabaseContract;
+import barqsoft.footballscores.provider.FixtureAndTeam;
 import barqsoft.footballscores.provider.FootballScoresProvider;
 import barqsoft.footballscores.sync.AccountUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class FixturesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FixturesFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     public static final String LOG_TAG = FixturesFragment.class.getSimpleName();
 
@@ -78,23 +82,10 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter = new FixturesCursorAdapter(getActivity(), null, 0);
         mListView.setAdapter(mAdapter);
 
+        mListView.setOnItemClickListener(this);
+
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
-
-        //mAdapter.detail_match_id = MainActivity.selected_match_id;
-        /*
-        score_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                ViewHolder selected = (ViewHolder) view.getTag();
-                mAdapter.detail_match_id = selected.match_id;
-                MainActivity.selected_match_id = (int) selected.match_id;
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-        */
         return rootView;
     }
 
@@ -146,4 +137,28 @@ public class FixturesFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter.swapCursor(null);
     }
 
+
+    /**
+     * Item click callbacks
+     */
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        FixtureAndTeam fixtureAndTeam = mAdapter.getItem(position);
+
+        if(fixtureAndTeam == null)
+            return;
+
+        String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
+
+        String shareText =
+                fixtureAndTeam.homeTeamName + " " +
+                fixtureAndTeam.getHomeTeamGoals() + " - " + fixtureAndTeam.getAwayTeamGoals() + " " +
+                fixtureAndTeam.awayTeamName + " " +
+                FOOTBALL_SCORES_HASHTAG;
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText + FOOTBALL_SCORES_HASHTAG);
+        getContext().startActivity(Intent.createChooser(shareIntent, "Compartir"));
+    }
 }

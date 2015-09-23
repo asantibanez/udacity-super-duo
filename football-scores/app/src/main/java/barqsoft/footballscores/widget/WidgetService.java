@@ -102,17 +102,12 @@ class WidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
         //Home team
         remoteViews.setTextViewText(R.id.home_team_name, fixtureAndTeam.homeTeamName);
-        if(fixtureAndTeam.homeTeamGoals >= 0)
-            remoteViews.setTextViewText(R.id.home_team_score, fixtureAndTeam.homeTeamGoals + "");
-        else
-            remoteViews.setTextViewText(R.id.home_team_score, "0");
+        remoteViews.setTextViewText(R.id.home_team_score, fixtureAndTeam.getHomeTeamGoals() + "");
 
         //Away team
         remoteViews.setTextViewText(R.id.away_team_name, fixtureAndTeam.awayTeamName);
-        if(fixtureAndTeam.awayTeamGoals >= 0)
-            remoteViews.setTextViewText(R.id.away_team_score, fixtureAndTeam.awayTeamGoals + "");
-        else
-            remoteViews.setTextViewText(R.id.away_team_score, "0");
+        remoteViews.setTextViewText(R.id.away_team_score, fixtureAndTeam.getAwayTeamGoals() + "");
+
 
         return remoteViews;
 

@@ -79,6 +79,7 @@ public class DatabaseContract {
         public static final String HOME_TEAM_GOALS = FIXTURE_ALIAS + "." + FixturesTable.HOME_GOALS_COL;
         public static final String AWAY_TEAM_GOALS = FIXTURE_ALIAS + "." + FixturesTable.AWAY_GOALS_COL;
         public static final String FIXTURE_LEAGUE_ID = FIXTURE_ALIAS + "." + FixturesTable.LEAGUE_COL;
+        public static final String FIXTURE_MATCH_DAY = FIXTURE_ALIAS + "." + FixturesTable.MATCH_DAY;
 
         //Home Team
         public static final String HOME_TEAM_ID = HOME_TEAM_ALIAS + "." + TeamsTable.TEAM_ID;
@@ -103,7 +104,8 @@ public class DatabaseContract {
                 AWAY_TEAM_NAME,
                 AWAY_TEAM_CREST_URL,
                 AWAY_TEAM_GOALS,
-                FIXTURE_LEAGUE_ID
+                FIXTURE_LEAGUE_ID,
+                FIXTURE_MATCH_DAY
         };
 
     }

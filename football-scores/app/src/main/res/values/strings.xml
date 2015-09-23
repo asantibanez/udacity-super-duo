@@ -16,6 +16,7 @@
 
 
     <!-- Leagues -->
+    <string name="match_day">Match day</string>
     <string name="champions_league">UEFA Champions League</string>
     <string name="bundesliga">Bundesliga</string>
     <string name="premier_league">Premier League</string>
