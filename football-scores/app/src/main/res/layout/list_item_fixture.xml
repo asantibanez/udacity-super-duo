@@ -94,6 +94,7 @@
             android:layout_height="wrap_content"
             app:layout_columnSpan="3"
             android:src="@drawable/ic_action_share"
+            android:contentDescription="@string/action_share"
             app:layout_gravity="fill" />
 
     </android.support.v7.widget.GridLayout>

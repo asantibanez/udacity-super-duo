@@ -152,7 +152,7 @@ public class FixturesFragment extends Fragment
 
         String shareText =
                 fixtureAndTeam.homeTeamName + " " +
-                fixtureAndTeam.getHomeTeamGoals() + " - " + fixtureAndTeam.getAwayTeamGoals() + " " +
+                "(" + fixtureAndTeam.getHomeTeamGoals() + " - " + fixtureAndTeam.getAwayTeamGoals() + ") " +
                 fixtureAndTeam.awayTeamName + " " +
                 FOOTBALL_SCORES_HASHTAG;
 

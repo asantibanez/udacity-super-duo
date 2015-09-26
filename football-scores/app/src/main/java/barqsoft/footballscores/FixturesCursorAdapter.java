@@ -68,6 +68,8 @@ public class FixturesCursorAdapter extends CursorAdapter {
                     .placeholder(R.drawable.placeholder_crest)
                     .error(R.drawable.placeholder_crest)
                     .into(mHolder.homeTeamCrest);
+        else
+            mHolder.homeTeamCrest.setImageResource(R.drawable.placeholder_crest);
 
         //Away team data
         mHolder.awayTeamName.setText(fixtureAndTeam.awayTeamName);
@@ -79,6 +81,9 @@ public class FixturesCursorAdapter extends CursorAdapter {
                     .placeholder(R.drawable.placeholder_crest)
                     .error(R.drawable.placeholder_crest)
                     .into(mHolder.awayTeamCrest);
+        else
+            mHolder.awayTeamCrest.setImageResource(R.drawable.placeholder_crest);
+
     }
 
 
