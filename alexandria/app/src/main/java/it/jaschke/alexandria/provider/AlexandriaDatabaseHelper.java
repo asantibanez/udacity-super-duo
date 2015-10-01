@@ -1,4 +1,4 @@
-package it.jaschke.alexandria.data;
+package it.jaschke.alexandria.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,15 +8,25 @@ import android.util.Log;
 /**
  * Created by saj on 22/12/14.
  */
-public class DbHelper extends SQLiteOpenHelper {
+public class AlexandriaDatabaseHelper extends SQLiteOpenHelper {
+
+    //Constants
+    private static final String LOG_TAG = AlexandriaDatabaseHelper.class.getSimpleName();
 
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "alexandria.db";
 
-    public DbHelper(Context context) {
+    /**
+     * Constructor
+     */
+    public AlexandriaDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+
+    /**
+     * Database creation
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -41,18 +51,24 @@ public class DbHelper extends SQLiteOpenHelper {
                 AlexandriaContract.BookEntry.TABLE_NAME + " (" + AlexandriaContract.BookEntry._ID + "))";
 
 
-        Log.d("sql-statments",SQL_CREATE_BOOK_TABLE);
-        Log.d("sql-statments",SQL_CREATE_AUTHOR_TABLE);
-        Log.d("sql-statments",SQL_CREATE_CATEGORY_TABLE);
-
+        Log.d(LOG_TAG,SQL_CREATE_BOOK_TABLE);
         db.execSQL(SQL_CREATE_BOOK_TABLE);
+
+        Log.d(LOG_TAG,SQL_CREATE_AUTHOR_TABLE);
         db.execSQL(SQL_CREATE_AUTHOR_TABLE);
+
+        Log.d(LOG_TAG,SQL_CREATE_CATEGORY_TABLE);
         db.execSQL(SQL_CREATE_CATEGORY_TABLE);
 
     }
 
+
+    /**
+     * Database upgrade
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
+
 }

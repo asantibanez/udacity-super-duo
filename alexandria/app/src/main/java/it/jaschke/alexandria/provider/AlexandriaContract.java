@@ -1,4 +1,4 @@
-package it.jaschke.alexandria.data;
+package it.jaschke.alexandria.provider;
 
 /**
  * Created by saj on 22/12/14.
@@ -7,7 +7,6 @@ package it.jaschke.alexandria.data;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 public class AlexandriaContract{
 
@@ -22,25 +21,27 @@ public class AlexandriaContract{
     public static final String PATH_FULLBOOK = "fullbook";
 
     public static final class BookEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BOOKS).build();
 
+        //Uris
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BOOKS).build();
         public static final Uri FULL_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FULLBOOK).build();
 
+        //Content Types
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_BOOKS;
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_BOOKS;
 
+        //Table Name
         public static final String TABLE_NAME = "books";
 
+        //Columns
         public static final String TITLE = "title";
-
         public static final String IMAGE_URL = "imgurl";
-
         public static final String SUBTITLE = "subtitle";
-
         public static final String DESC = "description";
 
+        //Uri Builders
         public static Uri buildBookUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

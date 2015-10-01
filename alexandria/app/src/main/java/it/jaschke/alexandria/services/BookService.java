@@ -2,6 +2,7 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,7 +22,7 @@ import java.net.URL;
 
 import it.jaschke.alexandria.MainActivity;
 import it.jaschke.alexandria.R;
-import it.jaschke.alexandria.data.AlexandriaContract;
+import it.jaschke.alexandria.provider.AlexandriaContract;
 
 
 /**
@@ -38,8 +39,23 @@ public class BookService extends IntentService {
 
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
 
+
+    /**
+     * Helper method
+     */
+    public static void fetchBook(Context context, String ean) {
+        Intent intent = new Intent(context, BookService.class);
+        intent.setAction(FETCH_BOOK);
+        intent.putExtra(EAN, ean);
+        context.startService(intent);
+    }
+
+
+    /**
+     * Constructor
+     */
     public BookService() {
-        super("Alexandria");
+        super("BookService");
     }
 
     @Override
@@ -75,6 +91,8 @@ public class BookService extends IntentService {
         if(ean.length()!=13){
             return;
         }
+
+        Log.d(LOG_TAG, "Fetching book with ean: " + ean);
 
         Cursor bookEntry = getContentResolver().query(
                 AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)),

@@ -1,4 +1,4 @@
-package it.jaschke.alexandria.api;
+package it.jaschke.alexandria.navigation.bookslist;
 
 
 import android.content.Context;
@@ -10,45 +10,53 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.jaschke.alexandria.R;
-import it.jaschke.alexandria.data.AlexandriaContract;
-import it.jaschke.alexandria.services.DownloadImage;
+import it.jaschke.alexandria.domain.FullBook;
 
 /**
  * Created by saj on 11/01/15.
  */
 public class BookListAdapter extends CursorAdapter {
 
-
+    //ViewHolder
     public static class ViewHolder {
-        public final ImageView bookCover;
-        public final TextView bookTitle;
-        public final TextView bookSubTitle;
+        @Bind(R.id.fullBookCover) ImageView bookCover;
+        @Bind(R.id.listBookTitle) TextView bookTitle;
+        @Bind(R.id.author_name) TextView bookAuthor;
 
         public ViewHolder(View view) {
-            bookCover = (ImageView) view.findViewById(R.id.fullBookCover);
-            bookTitle = (TextView) view.findViewById(R.id.listBookTitle);
-            bookSubTitle = (TextView) view.findViewById(R.id.listBookSubTitle);
+            ButterKnife.bind(this, view);
         }
     }
 
+
+    /**
+     * Constructor
+     */
     public BookListAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
+
+    /**
+     * Adapter methods
+     */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        String imgUrl = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
-        new DownloadImage(viewHolder.bookCover).execute(imgUrl);
+        FullBook fullBook = FullBook.fromCursor(cursor);
 
-        String bookTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
-        viewHolder.bookTitle.setText(bookTitle);
+        if(fullBook.coverUrl.length() > 0)
+            Glide.with(context).load(fullBook.coverUrl).into(viewHolder.bookCover);
 
-        String bookSubTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
-        viewHolder.bookSubTitle.setText(bookSubTitle);
+        viewHolder.bookCover.setContentDescription(fullBook.bookTitle);
+        viewHolder.bookTitle.setText(fullBook.bookTitle);
+        viewHolder.bookAuthor.setText(fullBook.authorName);
     }
 
     @Override
@@ -60,4 +68,5 @@ public class BookListAdapter extends CursorAdapter {
 
         return view;
     }
+
 }

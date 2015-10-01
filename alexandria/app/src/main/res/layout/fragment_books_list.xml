@@ -1,7 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="it.jaschke.alexandria.ListOfBooks">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/include_toolbar" />
+
+    <GridView
+        android:id="@+id/books_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:layout_below="@id/toolbar"
+        android:numColumns="2"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@color/white"
+        app:fabSize="normal" />
+
+    <!--
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -34,7 +63,7 @@
             android:layout_marginBottom="10dp"/>
 
 
-        <ListView android:id="@+id/listOfBooks"
+        <ListView android:id="@+id/books_list"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:layout_alignParentLeft="true"
@@ -48,5 +77,5 @@
 
 
     </RelativeLayout>
-
-</FrameLayout>
+    -->
+</RelativeLayout>

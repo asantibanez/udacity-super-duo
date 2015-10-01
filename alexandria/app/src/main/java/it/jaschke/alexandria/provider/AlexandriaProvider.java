@@ -1,4 +1,4 @@
-package it.jaschke.alexandria.data;
+package it.jaschke.alexandria.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -8,13 +8,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 /**
  * Created by saj on 24/12/14.
  */
-public class BookProvider extends ContentProvider {
+public class AlexandriaProvider extends ContentProvider {
 
+    //Constants
+    private static final String LOG_TAG = AlexandriaProvider.class.getSimpleName();
+
+
+    /**
+     * Uris' Ids
+     */
     private static final int BOOK_ID = 100;
     private static final int BOOK = 101;
 
@@ -27,21 +34,11 @@ public class BookProvider extends ContentProvider {
     private static final int BOOK_FULL = 500;
     private static final int BOOK_FULLDETAIL = 501;
 
+
+    /**
+     * Uri Matcher
+     */
     private static final UriMatcher uriMatcher = buildUriMatcher();
-
-    private DbHelper dbHelper;
-
-    private static final SQLiteQueryBuilder bookFull;
-
-    static{
-        bookFull = new SQLiteQueryBuilder();
-        bookFull.setTables(
-                AlexandriaContract.BookEntry.TABLE_NAME + " LEFT OUTER JOIN " +
-                AlexandriaContract.AuthorEntry.TABLE_NAME + " USING (" +AlexandriaContract.BookEntry._ID + ")" +
-                " LEFT OUTER JOIN " +  AlexandriaContract.CategoryEntry.TABLE_NAME + " USING (" +AlexandriaContract.BookEntry._ID + ")");
-    }
-
-
     private static UriMatcher buildUriMatcher() {
 
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -61,9 +58,22 @@ public class BookProvider extends ContentProvider {
         return matcher;
     }
 
+
+    private AlexandriaDatabaseHelper dbHelper;
+
+    private static final SQLiteQueryBuilder bookFull;
+
+    static{
+        bookFull = new SQLiteQueryBuilder();
+        bookFull.setTables(
+                AlexandriaContract.BookEntry.TABLE_NAME + " LEFT OUTER JOIN " +
+                AlexandriaContract.AuthorEntry.TABLE_NAME + " USING (" +AlexandriaContract.BookEntry._ID + ")" +
+                " LEFT OUTER JOIN " +  AlexandriaContract.CategoryEntry.TABLE_NAME + " USING (" +AlexandriaContract.BookEntry._ID + ")");
+    }
+
     @Override
     public boolean onCreate() {
-        dbHelper = new DbHelper(getContext());
+        dbHelper = new AlexandriaDatabaseHelper(getContext());
         return true;
 
     }
@@ -182,7 +192,7 @@ public class BookProvider extends ContentProvider {
 
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         final int match = uriMatcher.match(uri);
 
         switch (match) {
@@ -206,10 +216,11 @@ public class BookProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         Uri returnUri;
+
         switch (match) {
             case BOOK: {
                 long _id = db.insert(AlexandriaContract.BookEntry.TABLE_NAME, null, values);

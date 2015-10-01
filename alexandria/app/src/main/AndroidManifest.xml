@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.jaschke.alexandria" >
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -7,12 +8,12 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-
     <application
-        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
+        <!-- Main -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
@@ -22,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Settings -->
         <activity
             android:label="@string/title_activity_settings"
             android:name=".SettingsActivity"
@@ -31,16 +34,18 @@
                 android:value=".MainActivity" />
         </activity>
 
-
-
+        <!-- Content Provider -->
         <provider
-            android:name=".data.BookProvider"
+            android:name=".provider.AlexandriaProvider"
             android:authorities="it.jaschke.alexandria"
             android:exported="false" />
+
+        <!-- Book Service -->
         <service
             android:name=".services.BookService"
             android:exported="false" >
         </service>
+
     </application>
 
 </manifest>
