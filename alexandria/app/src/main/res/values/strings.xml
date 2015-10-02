@@ -39,6 +39,8 @@
     <!-- Errors -->
     <string name="error_invalid_isbn_number">Invalid ISBN number. Must be 10 or 13 characters long.</string>
 
+    <!-- Sharing -->
+    <string name="share_text">A must read book: </string>
 
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
@@ -53,7 +55,6 @@
     <string name="pref_startScreen">Select Startscreen</string>
     <string name="action_share">Share</string>
     <string name="back_button">go back</string>
-    <string name="share_text">A must read book: </string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.

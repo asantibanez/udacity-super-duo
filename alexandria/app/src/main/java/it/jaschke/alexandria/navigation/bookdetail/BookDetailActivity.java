@@ -44,6 +44,7 @@ public class BookDetailActivity extends AppCompatActivity implements
     //Variables
     long mBookId;
     FullBook mFullBook;
+    ShareActionProvider mShareActionProvider;
 
     //Controls
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -95,6 +96,11 @@ public class BookDetailActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_book_detail, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        setShareIntent();
+
         return true;
     }
 
@@ -125,6 +131,20 @@ public class BookDetailActivity extends AppCompatActivity implements
         mBookAuthorView.setText(mFullBook.authorName);
         mBookCategoryView.setText(mFullBook.categoryName);
         mBookDescriptionView.setText(mFullBook.bookDescription);
+
+        //Share intent
+        setShareIntent();
+    }
+
+    private void setShareIntent() {
+        if(mShareActionProvider == null || mFullBook == null)
+            return;
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + mFullBook.bookTitle);
+        mShareActionProvider.setShareIntent(shareIntent);
     }
 
 
