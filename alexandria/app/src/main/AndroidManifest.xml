@@ -1,37 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.jaschke.alexandria" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
 
         <!-- Main -->
         <activity
-            android:name=".MainActivity"
+            android:name=".BooksListActivity"
             android:configChanges="orientation"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Settings -->
+        <!-- Add Book Activity -->
         <activity
-            android:label="@string/title_activity_settings"
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity" >
+            android:name=".navigation.addbook.AddBookActivity"
+            android:label="@string/title_activity_add_book"
+            android:parentActivityName=".BooksListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".BooksListActivity" />
+        </activity>
+
+        <!-- Book Detail  -->
+        <activity
+            android:name=".navigation.bookdetail.BookDetailActivity"
+            android:parentActivityName=".BooksListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BooksListActivity" />
+        </activity>
+
+        <!-- Settings -->
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".BooksListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BooksListActivity" />
         </activity>
 
         <!-- Content Provider -->

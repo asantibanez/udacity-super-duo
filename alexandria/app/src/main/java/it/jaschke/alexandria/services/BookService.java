@@ -20,7 +20,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import it.jaschke.alexandria.MainActivity;
 import it.jaschke.alexandria.R;
 import it.jaschke.alexandria.provider.AlexandriaContract;
 
@@ -34,11 +33,23 @@ public class BookService extends IntentService {
 
     private final String LOG_TAG = BookService.class.getSimpleName();
 
+    //Available Actions
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
 
+    //Supported Arguments
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
 
+    //Message Constants
+    public static final String SEARCH_EVENT = "book_search_event";
+    public static final String SEARCH_EVENT_MESSAGE = "book_search.message_extra";
+    public static final String SEARCH_EVENT_BOOK_ID = "book_search.book_id_extra";
+    public static final String SEARCH_EVENT_STATUS = "book_search.status_extra";
+
+    //Available Status Constants
+    public static final String BOOK_ALREADY_ADDED = "book_already_added";
+    public static final String BOOK_FOUND = "book_found";
+    public static final String BOOK_NOT_FOUND = "book_not_found";
 
     /**
      * Helper method
@@ -50,6 +61,12 @@ public class BookService extends IntentService {
         context.startService(intent);
     }
 
+    public static void deleteBook(Context context, String ean) {
+        Intent intent = new Intent(context, BookService.class);
+        intent.setAction(DELETE_BOOK);
+        intent.putExtra(EAN, ean);
+        context.startService(intent);
+    }
 
     /**
      * Constructor
@@ -104,6 +121,7 @@ public class BookService extends IntentService {
 
         if(bookEntry.getCount()>0){
             bookEntry.close();
+            broadcastBookAlreadyAdded();
             return;
         }
 
@@ -124,6 +142,8 @@ public class BookService extends IntentService {
                     .build();
 
             URL url = new URL(builtUri.toString());
+
+            Log.d(LOG_TAG, "Url: " + url);
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -146,6 +166,7 @@ public class BookService extends IntentService {
                 return;
             }
             bookJsonString = buffer.toString();
+
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
         } finally {
@@ -180,9 +201,7 @@ public class BookService extends IntentService {
             if(bookJson.has(ITEMS)){
                 bookArray = bookJson.getJSONArray(ITEMS);
             }else{
-                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+                broadcastNotBookFound();
                 return;
             }
 
@@ -214,11 +233,16 @@ public class BookService extends IntentService {
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }
 
+            broadcastBookFound(ean);
+
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
         }
     }
 
+    /**
+     * Write book data in database methods
+     */
     private void writeBackBook(String ean, String title, String subtitle, String desc, String imgUrl) {
         ContentValues values= new ContentValues();
         values.put(AlexandriaContract.BookEntry._ID, ean);
@@ -248,4 +272,37 @@ public class BookService extends IntentService {
             values= new ContentValues();
         }
     }
+
+    /**
+     * Information broadcasts for receivers
+     */
+    public void broadcastBookAlreadyAdded() {
+        String message = getResources().getString(R.string.info_book_already_registered);
+
+        Intent messageIntent = new Intent(SEARCH_EVENT);
+        messageIntent.putExtra(SEARCH_EVENT_MESSAGE, message);
+        messageIntent.putExtra(SEARCH_EVENT_STATUS, BOOK_ALREADY_ADDED);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
+    public void broadcastBookFound(String bookId) {
+        Intent messageIntent = new Intent(SEARCH_EVENT);
+        messageIntent.putExtra(SEARCH_EVENT_MESSAGE, "");
+        messageIntent.putExtra(SEARCH_EVENT_BOOK_ID, Long.parseLong(bookId));
+        messageIntent.putExtra(SEARCH_EVENT_STATUS, BOOK_FOUND);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
+    public void broadcastNotBookFound() {
+        String message = getResources().getString(R.string.info_book_not_found);
+
+        Intent messageIntent = new Intent(SEARCH_EVENT);
+        messageIntent.putExtra(SEARCH_EVENT_MESSAGE, message);
+        messageIntent.putExtra(SEARCH_EVENT_STATUS, BOOK_NOT_FOUND);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
  }

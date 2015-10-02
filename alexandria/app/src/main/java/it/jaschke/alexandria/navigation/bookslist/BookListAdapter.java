@@ -22,8 +22,11 @@ import it.jaschke.alexandria.domain.FullBook;
  */
 public class BookListAdapter extends CursorAdapter {
 
+    public static final String LOG_TAG = BookListAdapter.class.getSimpleName();
+
     //ViewHolder
     public static class ViewHolder {
+        @Bind(R.id.noBookCoverInfo) TextView noBookCoverInfo;
         @Bind(R.id.fullBookCover) ImageView bookCover;
         @Bind(R.id.listBookTitle) TextView bookTitle;
         @Bind(R.id.author_name) TextView bookAuthor;
@@ -51,8 +54,14 @@ public class BookListAdapter extends CursorAdapter {
 
         FullBook fullBook = FullBook.fromCursor(cursor);
 
-        if(fullBook.coverUrl.length() > 0)
-            Glide.with(context).load(fullBook.coverUrl).into(viewHolder.bookCover);
+        if(fullBook.bookCoverUrl.length() > 0) {
+            Glide.with(context).load(fullBook.bookCoverUrl).into(viewHolder.bookCover);
+            viewHolder.noBookCoverInfo.setVisibility(View.GONE);
+        }
+        else {
+            viewHolder.bookCover.setImageBitmap(null);
+            viewHolder.noBookCoverInfo.setVisibility(View.VISIBLE);
+        }
 
         viewHolder.bookCover.setContentDescription(fullBook.bookTitle);
         viewHolder.bookTitle.setText(fullBook.bookTitle);

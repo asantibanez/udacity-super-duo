@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.util.Arrays;
 
 /**
  * Created by saj on 24/12/14.
@@ -80,6 +83,8 @@ public class AlexandriaProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.v(LOG_TAG, "query(uri=" + uri + ", proj=" + Arrays.toString(projection) + ", selection=" + selection + ", selectionArgs=" + Arrays.toString(selectionArgs) + ", sortOrder=" + sortOrder + ")");
+
         Cursor retCursor;
         switch (uriMatcher.match(uri)) {
             case BOOK:
@@ -150,6 +155,7 @@ public class AlexandriaProvider extends ContentProvider {
                 break;
             case BOOK_FULLDETAIL:
                 String[] bfd_projection ={
+                    AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry._ID + " as " + AlexandriaContract.BookEntry._ID,
                     AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.TITLE,
                     AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.SUBTITLE,
                     AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.IMAGE_URL,
@@ -167,8 +173,11 @@ public class AlexandriaProvider extends ContentProvider {
                 break;
             case BOOK_FULL:
                 String[] bf_projection ={
+                        AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry._ID + " as " + AlexandriaContract.BookEntry._ID,
                         AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.TITLE,
+                        AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.SUBTITLE,
                         AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.IMAGE_URL,
+                        AlexandriaContract.BookEntry.TABLE_NAME + "." + AlexandriaContract.BookEntry.DESC,
                         "group_concat(DISTINCT " + AlexandriaContract.AuthorEntry.TABLE_NAME+ "."+ AlexandriaContract.AuthorEntry.AUTHOR + ") as " + AlexandriaContract.AuthorEntry.AUTHOR,
                         "group_concat(DISTINCT " + AlexandriaContract.CategoryEntry.TABLE_NAME+ "."+ AlexandriaContract.CategoryEntry.CATEGORY +") as " + AlexandriaContract.CategoryEntry.CATEGORY
                 };
@@ -217,6 +226,8 @@ public class AlexandriaProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
+        Log.v(LOG_TAG, "insert(uri=" + uri + ", values=" + values.toString() + ")");
+
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         Uri returnUri;

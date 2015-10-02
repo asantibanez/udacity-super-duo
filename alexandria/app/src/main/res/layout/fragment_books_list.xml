@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <include
@@ -16,8 +16,53 @@
         android:layout_below="@id/toolbar"
         android:numColumns="2"
         android:verticalSpacing="8dp"
-        android:horizontalSpacing="8dp" />
+        android:horizontalSpacing="8dp"
+        android:clipToPadding="false"
+        tools:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/no_books_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="40dp"
+        android:text="@string/info_no_books_in_app"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
+
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:menu_icon="@drawable/ic_add">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_scan_barcode"
+            app:fab_colorNormal="@color/white"
+            app:fab_colorPressed="@color/white"
+            app:fab_colorRipple="#99FFFFFF"
+            app:fab_label="@string/action_scan_book"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_text"
+            app:fab_colorNormal="@color/white"
+            app:fab_colorPressed="@color/white"
+            app:fab_colorRipple="#99FFFFFF"
+            app:fab_label="@string/action_enter_isbn"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+    <!--
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -29,6 +74,7 @@
         android:src="@android:drawable/ic_input_add"
         android:tint="@color/white"
         app:fabSize="normal" />
+    -->
 
     <!--
     <RelativeLayout
