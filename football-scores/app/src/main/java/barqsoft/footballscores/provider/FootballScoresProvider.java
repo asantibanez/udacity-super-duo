@@ -1,6 +1,7 @@
 package barqsoft.footballscores.provider;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -77,6 +78,8 @@ public class FootballScoresProvider extends ContentProvider {
                 Log.e(LOG_TAG, "No implementation for " + uri);
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return cursor;
 
