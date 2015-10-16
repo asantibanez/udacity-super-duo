@@ -158,7 +158,7 @@ public class FixturesFragment extends Fragment
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText + FOOTBALL_SCORES_HASHTAG);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         getContext().startActivity(Intent.createChooser(shareIntent, "Compartir"));
     }
 }
