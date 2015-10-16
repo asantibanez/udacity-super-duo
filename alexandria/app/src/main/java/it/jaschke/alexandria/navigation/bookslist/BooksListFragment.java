@@ -1,5 +1,6 @@
 package it.jaschke.alexandria.navigation.bookslist;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,10 +20,10 @@ import com.github.clans.fab.FloatingActionMenu;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import it.jaschke.alexandria.BooksListActivity;
 import it.jaschke.alexandria.R;
 import it.jaschke.alexandria.domain.FullBook;
 import it.jaschke.alexandria.navigation.Navigator;
+import it.jaschke.alexandria.navigation.addbook.ScanBookActivity;
 import it.jaschke.alexandria.provider.AlexandriaContract;
 
 
@@ -80,7 +81,13 @@ public class BooksListFragment extends Fragment implements
         mFabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigator.goToIsbnRegistration(getActivity());
+                Navigator.goToIsbnRegistration(getActivity(), false);
+            }
+        });
+        mFabScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigator.goToIsbnRegistration(getActivity(), true);
             }
         });
 

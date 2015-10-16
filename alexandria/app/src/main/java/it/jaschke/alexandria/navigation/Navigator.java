@@ -10,8 +10,8 @@ import it.jaschke.alexandria.navigation.addbook.AddBookActivity;
  */
 public class Navigator {
 
-    public static void goToIsbnRegistration(Context context) {
-        context.startActivity(AddBookActivity.launchIntent(context));
+    public static void goToIsbnRegistration(Context context, boolean launchScan) {
+        context.startActivity(AddBookActivity.launchIntent(context, launchScan));
     }
 
     public static void goToBookDetail(Context context, long bookId) {

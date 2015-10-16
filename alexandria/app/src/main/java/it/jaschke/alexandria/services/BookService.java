@@ -237,6 +237,10 @@ public class BookService extends IntentService {
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
+            broadcastSearchError();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error ", e);
+            broadcastSearchError();
         }
     }
 
@@ -297,6 +301,16 @@ public class BookService extends IntentService {
 
     public void broadcastNotBookFound() {
         String message = getResources().getString(R.string.info_book_not_found);
+
+        Intent messageIntent = new Intent(SEARCH_EVENT);
+        messageIntent.putExtra(SEARCH_EVENT_MESSAGE, message);
+        messageIntent.putExtra(SEARCH_EVENT_STATUS, BOOK_NOT_FOUND);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
+    public void broadcastSearchError() {
+        String message = getResources().getString(R.string.error_searching_book_info);
 
         Intent messageIntent = new Intent(SEARCH_EVENT);
         messageIntent.putExtra(SEARCH_EVENT_MESSAGE, message);

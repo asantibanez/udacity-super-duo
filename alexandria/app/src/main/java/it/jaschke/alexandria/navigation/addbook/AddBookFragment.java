@@ -35,6 +35,7 @@ public class AddBookFragment extends Fragment {
     @Bind(R.id.isbn_number) EditText mIsbnNumberView;
     @Bind(R.id.progress_bar) ProgressBar mProgressBar;
     @Bind(R.id.confirm_button) Button mConfirmButton;
+    @Bind(R.id.scan_button) Button mScanButton;
 
     /**
      * Factory and constructor
@@ -70,23 +71,16 @@ public class AddBookFragment extends Fragment {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mSearchRunning)
-                    return;
+                startSearch();
+            }
+        });
 
-                String isbnNumber = mIsbnNumberView.getText().toString();
-                if (isbnNumber.length() != 10 && isbnNumber.length() != 13) {
-                    Snackbar.make(getView(), R.string.error_invalid_isbn_number, Snackbar.LENGTH_LONG).show();
-                    return;
-                }
-
-                //Add ean 13 digits
-                if(isbnNumber.length() == 10 && !isbnNumber.startsWith("978")){
-                    isbnNumber = "978" + isbnNumber;
-                }
-
-                BookService.fetchBook(getContext(), isbnNumber);
-                mSearchRunning = true;
-                showProgressBar(true);
+        //Register scan button action
+        mScanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddBookActivity addBookActivity = (AddBookActivity) getActivity();
+                addBookActivity.launchScanActivity();
             }
         });
 
@@ -95,6 +89,31 @@ public class AddBookFragment extends Fragment {
             showProgressBar(true);
 
         return view;
+    }
+
+    public void setIsbnNumberAndStartSearch(String isbnNumber) {
+        mIsbnNumberView.setText(isbnNumber);
+        startSearch();
+    }
+
+    private void startSearch() {
+        if (mSearchRunning)
+            return;
+
+        String isbnNumber = mIsbnNumberView.getText().toString();
+        if (isbnNumber.length() != 10 && isbnNumber.length() != 13) {
+            Snackbar.make(getView(), R.string.error_invalid_isbn_number, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        //Add ean 13 digits
+        if(isbnNumber.length() == 10 && !isbnNumber.startsWith("978")){
+            isbnNumber = "978" + isbnNumber;
+        }
+
+        BookService.fetchBook(getContext(), isbnNumber);
+        mSearchRunning = true;
+        showProgressBar(true);
     }
 
     private void showProgressBar(boolean show) {

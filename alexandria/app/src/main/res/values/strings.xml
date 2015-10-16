@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Alexandria</string>
+    <string name="app_name" translatable="false">Alexandria</string>
 
     <!-- Activities -->
     <string name="title_activity_add_book">Add Book</string>
@@ -17,6 +17,7 @@
     <string name="action_enter_isbn">Enter ISBN</string>
     <string name="action_confirm">Confirm</string>
     <string name="action_delete">Delete Book</string>
+    <string name="action_about_app">About App</string>
 
     <!-- Hints -->
     <string name="hint_isbn">10/13 digit ISBN</string>
@@ -25,6 +26,9 @@
     <!-- Instructions -->
     <string name="instructions_enter_isbn">
         Enter book\'s ISBN number. You can find this number on the book cover or online. It is usually 10 or 13 digits long.
+    </string>
+    <string name="instructions_scan_book">
+        You can also scan a book\'s barcode which includes it\'s ISBN number to automatically search the it\'s information.
     </string>
     <string name="info_no_books_in_app">
         We found no books registered. Try adding your favorite or collection of books
@@ -38,6 +42,7 @@
 
     <!-- Errors -->
     <string name="error_invalid_isbn_number">Invalid ISBN number. Must be 10 or 13 characters long.</string>
+    <string name="error_searching_book_info">Error finding book info. Please try again :(</string>
 
     <!-- Sharing -->
     <string name="share_text">A must read book: </string>
@@ -56,10 +61,7 @@
     <string name="action_share">Share</string>
     <string name="back_button">go back</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.
     The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. </string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

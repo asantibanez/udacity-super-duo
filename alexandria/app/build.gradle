@@ -54,4 +54,7 @@ dependencies {
 
     //Fab
     compile 'com.github.clans:fab:1.6.1'
+
+    //Barcode
+    compile 'me.dm7.barcodescanner:zxing:1.8.3'
 }

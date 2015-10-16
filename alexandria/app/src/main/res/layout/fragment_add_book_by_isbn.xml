@@ -35,4 +35,20 @@
         android:textColor="@color/white"
         android:text="@string/action_confirm" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/instructions_scan_book"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/scan_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:text="@string/action_scan_book" />
+
 </LinearLayout>
