@@ -41,7 +41,7 @@
 
 
     <!-- API KEY for service-->
-    <string name="api_key" translatable="false">38d49dbc0efd4be48e88c13c28af80d5</string>
+    <string name="api_key" translatable="false">YOUR_API_KEY_HERE</string>
 
 
     <!-- Dummy data -->
