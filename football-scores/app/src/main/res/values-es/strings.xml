@@ -39,5 +39,6 @@
 
     <!-- Help texts -->
     <string name="no_fixtures_for_day">No hay partidos para este día.</string>
+    <string name="team_crest">Emblema de equipo</string>
 
 </resources>
