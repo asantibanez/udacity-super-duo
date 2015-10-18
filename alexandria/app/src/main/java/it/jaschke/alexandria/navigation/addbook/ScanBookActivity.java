@@ -1,8 +1,8 @@
 package it.jaschke.alexandria.navigation.addbook;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.zxing.Result;
@@ -12,7 +12,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 /**
  * Created by asantibanez on 10/15/15.
  */
-public class ScanBookActivity  extends Activity implements ZXingScannerView.ResultHandler {
+public class ScanBookActivity  extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     public static final String TAG = ScanBookActivity.class.getSimpleName();
 
